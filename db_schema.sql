@@ -6,7 +6,9 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE instructor_details (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     youtube_channel VARCHAR(255) NOT NULL,
-    hoppy TEXT
+    hoppy TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 2. instructor table
@@ -16,6 +18,8 @@ CREATE TABLE instructor (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     instructor_details_id UUID UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (instructor_details_id) REFERENCES instructor_details(id) ON DELETE SET NULL
 );
 

@@ -1,12 +1,39 @@
-# Course Management System
+# Course Management API
 
-A Spring Boot application for managing courses with PostgreSQL database.
+A comprehensive Spring Boot RESTful API for managing instructors and instructor details with PostgreSQL database. Features a clean layered architecture with full CRUD operations, validation, error handling, and Swagger documentation.
+
+## 🚀 Features
+
+- **RESTful API** for instructors and instructor details management
+- **One-to-One relationship** between instructors and their details
+- **Comprehensive validation** with custom error handling
+- **Swagger/OpenAPI documentation** for interactive API testing
+- **PostgreSQL database** with UUID primary keys
+- **Clean architecture** with Controller → Service → Repository layers
+- **Search functionality** by name, email, YouTube channel, and hobby
+
+## 📁 Project Structure
+
+```
+src/main/java/com/coursemanagement/
+├── CourseManagementApplication.java        # Main application class
+├── config/
+│   └── OpenApiConfig.java                  # Swagger/OpenAPI configuration
+├── controller/
+│   ├── InstructorController.java          # REST endpoints for instructors
+│   └── InstructorDetailsController.java   # REST endpoints for instructor details
+├── dto/                                    # Data Transfer Objects
+├── entity/                                 # JPA entities
+├── exception/                              # Global exception handling
+├── repository/                             # Spring Data JPA repositories
+└── service/                                # Business logic layer
+```
 
 ## Prerequisites
 
 - Docker and Docker Compose installed
 - Java 17 or higher
-- Gradle
+- Maven (or use included Maven wrapper)
 
 ## Database Setup
 
@@ -68,16 +95,38 @@ docker exec -it course-db psql -U admin -d course_management_db
 
 1. **Build the application:**
    ```bash
-   ./gradlew build
+   ./mvnw clean compile
    ```
 
 2. **Run the application:**
    ```bash
-   ./gradlew bootRun
+   ./mvnw spring-boot:run
    ```
 
 3. **Access the application:**
-   - URL: http://localhost:8080
+   - **Main API**: http://localhost:8080
+   - **Swagger UI**: http://localhost:8080/swagger-ui.html
+   - **OpenAPI JSON**: http://localhost:8080/api-docs
+
+## 📡 API Endpoints
+
+### Instructor Management
+- `POST /api/v1/instructors` - Create instructor (with optional details)
+- `GET /api/v1/instructors` - Get all instructors
+- `GET /api/v1/instructors/{id}` - Get instructor by ID
+- `PUT /api/v1/instructors/{id}` - Update instructor
+- `DELETE /api/v1/instructors/{id}` - Delete instructor
+- `GET /api/v1/instructors/search?name={name}` - Search by name
+- `GET /api/v1/instructors/email/{email}` - Get by email
+
+### Instructor Details Management
+- `POST /api/v1/instructor-details` - Create instructor details
+- `GET /api/v1/instructor-details` - Get all instructor details
+- `GET /api/v1/instructor-details/{id}` - Get details by ID
+- `PUT /api/v1/instructor-details/{id}` - Update details
+- `DELETE /api/v1/instructor-details/{id}` - Delete details
+- `GET /api/v1/instructor-details/search/youtube?channel={channel}` - Search by YouTube
+- `GET /api/v1/instructor-details/search/hobby?hobby={hobby}` - Search by hobby
 
 ## Useful Commands
 
@@ -99,6 +148,24 @@ docker-compose down -v
 docker-compose logs -f postgres
 ```
 
+### Maven Commands:
+```bash
+# Clean and compile
+./mvnw clean compile
+
+# Run application
+./mvnw spring-boot:run
+
+# Run tests
+./mvnw test
+
+# Package application
+./mvnw clean package
+
+# Build without tests
+./mvnw clean package -DskipTests
+```
+
 ### Database Operations:
 ```bash
 # Connect to database
@@ -113,6 +180,43 @@ docker exec -it course-db psql -U admin -c "\l"
 # Exit psql
 \q
 ```
+
+## 🧪 Example API Usage
+
+### Create an Instructor with Details
+```bash
+curl -X POST "http://localhost:8080/api/v1/instructors" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "instructorDetails": {
+      "youtubeChannel": "https://youtube.com/@johndoe",
+      "hobby": "Teaching and coding"
+    }
+  }'
+```
+
+### Get All Instructors
+```bash
+curl -X GET "http://localhost:8080/api/v1/instructors"
+```
+
+### Search Instructors by Name
+```bash
+curl -X GET "http://localhost:8080/api/v1/instructors/search?name=John"
+```
+
+## 🛠️ Technologies Used
+
+- **Spring Boot 3.5.4**
+- **Spring Data JPA**
+- **Spring Web & Validation**
+- **PostgreSQL**
+- **SpringDoc OpenAPI UI**
+- **Java 17**
+- **Maven**
 
 ## Troubleshooting
 
@@ -129,4 +233,9 @@ If port 5432 is already in use, you can:
 ### Connection Issues:
 1. Ensure container is running: `docker-compose ps`
 2. Check logs: `docker-compose logs postgres`
-3. Verify port mapping: `docker port course-db` 
+3. Verify port mapping: `docker port course-db`
+
+### Maven Issues:
+1. Make Maven wrapper executable: `chmod +x mvnw`
+2. Clean and rebuild: `./mvnw clean compile`
+3. Skip tests if needed: `./mvnw spring-boot:run -DskipTests` 

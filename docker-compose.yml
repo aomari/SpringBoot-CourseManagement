@@ -1,22 +1,47 @@
+version: '3.8'
+
 services:
   postgres:
-    image: postgres:16
+    image: postgres:15-alpine
     container_name: course-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: course_management_db
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_data:/data/postgres
+      - ./db_schema.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-    volumes:
-      - course-db-data:/var/lib/postgresql/data
+    networks:
+      - course-management-network
+
+  # Optional: pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: course-db-admin
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d course_management_db"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@coursemanagement.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - course-management-network
+    depends_on:
+      - postgres
 
 volumes:
-  course-db-data:
-    driver: local 
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  course-management-network:
+    driver: bridge
