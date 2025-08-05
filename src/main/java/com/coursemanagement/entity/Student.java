@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Entity class representing an instructor.
- * Has a one-to-one relationship with InstructorDetails (optional).
+ * Entity class representing a student.
+ * Has a many-to-many relationship with Course through course_student join table.
  */
 @Entity
-@Table(name = "instructor")
-public class Instructor {
+@Table(name = "student")
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,31 +39,25 @@ public class Instructor {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // One-to-one relationship with InstructorDetails (optional)
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "instructor_details_id", referencedColumnName = "id")
-    private InstructorDetails instructorDetails;
-
-    // One-to-many relationship with Course
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // Many-to-many relationship with Course
+    // No cascade operations - removing a student doesn't delete courses, and vice versa
+    // Only the join table entries are managed
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "course_student",
+        joinColumns = @JoinColumn(name = "student_id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
     private List<Course> courses = new ArrayList<>();
 
     // Default constructor
-    public Instructor() {}
+    public Student() {}
 
     // Constructor with required fields
-    public Instructor(String firstName, String lastName, String email) {
+    public Student(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-    }
-
-    // Constructor with all fields
-    public Instructor(String firstName, String lastName, String email, InstructorDetails instructorDetails) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.instructorDetails = instructorDetails;
     }
 
     // Getters and Setters
@@ -115,18 +109,6 @@ public class Instructor {
         this.updatedAt = updatedAt;
     }
 
-    public InstructorDetails getInstructorDetails() {
-        return instructorDetails;
-    }
-
-    public void setInstructorDetails(InstructorDetails instructorDetails) {
-        this.instructorDetails = instructorDetails;
-        // Set bidirectional relationship
-        if (instructorDetails != null) {
-            instructorDetails.setInstructor(this);
-        }
-    }
-
     public List<Course> getCourses() {
         return courses;
     }
@@ -135,16 +117,20 @@ public class Instructor {
         this.courses = courses;
     }
 
-    // Helper method to add a course
-    public void addCourse(Course course) {
-        courses.add(course);
-        course.setInstructor(this);
+    // Helper method to enroll in a course
+    public void enrollInCourse(Course course) {
+        if (!this.courses.contains(course)) {
+            this.courses.add(course);
+            course.getStudents().add(this);
+        }
     }
 
-    // Helper method to remove a course
-    public void removeCourse(Course course) {
-        courses.remove(course);
-        course.setInstructor(null);
+    // Helper method to unenroll from a course
+    public void unenrollFromCourse(Course course) {
+        if (this.courses.contains(course)) {
+            this.courses.remove(course);
+            course.getStudents().remove(this);
+        }
     }
 
     // Helper method to get full name
@@ -152,15 +138,34 @@ public class Instructor {
         return firstName + " " + lastName;
     }
 
+    // Helper method to check if enrolled in a course
+    public boolean isEnrolledInCourse(Course course) {
+        return this.courses.contains(course);
+    }
+
     @Override
     public String toString() {
-        return "Instructor{" +
+        return "Student{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", coursesCount=" + (courses != null ? courses.size() : 0) +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return id != null && id.equals(student.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
