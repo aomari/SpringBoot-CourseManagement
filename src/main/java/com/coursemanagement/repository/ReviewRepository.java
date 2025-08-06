@@ -56,8 +56,40 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     List<Review> findLatestReviews();
 
     /**
-     * Find reviews with course and instructor information.
+     * Find reviews by student ID.
      */
-    @Query("SELECT r FROM Review r JOIN FETCH r.course c JOIN FETCH c.instructor")
-    List<Review> findAllWithCourseAndInstructor();
+    List<Review> findByStudentId(UUID studentId);
+
+    /**
+     * Find reviews by student ID ordered by creation date (newest first).
+     */
+    List<Review> findByStudentIdOrderByCreatedAtDesc(UUID studentId);
+
+    /**
+     * Find reviews by course ID and student ID.
+     */
+    List<Review> findByCourseIdAndStudentId(UUID courseId, UUID studentId);
+
+    /**
+     * Count reviews by student ID.
+     */
+    long countByStudentId(UUID studentId);
+
+    /**
+     * Find reviews by student email (through student relationship).
+     */
+    @Query("SELECT r FROM Review r JOIN r.student s WHERE LOWER(s.email) = LOWER(:email)")
+    List<Review> findByStudentEmail(@Param("email") String email);
+
+    /**
+     * Find reviews by student name (through student relationship).
+     */
+    @Query("SELECT r FROM Review r JOIN r.student s WHERE LOWER(CONCAT(s.firstName, ' ', s.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<Review> findByStudentName(@Param("name") String name);
+
+    /**
+     * Find reviews with course, instructor, and student information.
+     */
+    @Query("SELECT r FROM Review r JOIN FETCH r.course c JOIN FETCH c.instructor JOIN FETCH r.student")
+    List<Review> findAllWithCourseInstructorAndStudent();
 }

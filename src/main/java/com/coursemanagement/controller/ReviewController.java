@@ -1,5 +1,7 @@
 package com.coursemanagement.controller;
 
+import com.coursemanagement.dto.ReviewCountResponse;
+import com.coursemanagement.dto.ReviewExistsResponse;
 import com.coursemanagement.dto.ReviewRequest;
 import com.coursemanagement.dto.ReviewResponse;
 import com.coursemanagement.exception.ErrorResponse;
@@ -51,8 +53,6 @@ public class ReviewController {
             @PathVariable UUID courseId,
             @Valid @RequestBody ReviewRequest request) {
         
-        // Override the courseId from path to ensure consistency
-        request.setCourseId(courseId);
         ReviewResponse response = reviewService.createReview(courseId, request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -176,28 +176,97 @@ public class ReviewController {
     }
 
     @Operation(summary = "Check if review exists by ID", description = "Checks if a review exists by its ID")
-    @ApiResponse(responseCode = "200", description = "Existence check completed")
+    @ApiResponse(responseCode = "200", description = "Existence check completed",
+            content = @Content(schema = @Schema(implementation = ReviewExistsResponse.class)))
     @GetMapping("/reviews/{id}/exists")
-    public ResponseEntity<Boolean> existsById(
+    public ResponseEntity<ReviewExistsResponse> existsById(
             @Parameter(description = "Review ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         boolean exists = reviewService.existsById(id);
-        return ResponseEntity.ok(exists);
+        return ResponseEntity.ok(new ReviewExistsResponse(exists));
     }
 
     @Operation(summary = "Count reviews for course", description = "Counts the number of reviews for a specific course")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Review count retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Review count retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ReviewCountResponse.class))),
             @ApiResponse(responseCode = "404", description = "Course not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/courses/{courseId}/reviews/count")
-    public ResponseEntity<Long> countReviewsForCourse(
+    public ResponseEntity<ReviewCountResponse> countReviewsForCourse(
             @Parameter(description = "Course ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID courseId) {
         
         long count = reviewService.countReviewsByCourseId(courseId);
-        return ResponseEntity.ok(count);
+        return ResponseEntity.ok(new ReviewCountResponse(count));
+    }
+
+    // Student-related endpoints
+    @Operation(summary = "Get reviews by student", description = "Retrieves all reviews written by a specific student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reviews retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Student not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/students/{studentId}/reviews")
+    public ResponseEntity<List<ReviewResponse>> getReviewsByStudent(
+            @Parameter(description = "Student ID", example = "987fcdeb-51a2-43d1-9b12-345678901234")
+            @PathVariable UUID studentId) {
+        
+        List<ReviewResponse> response = reviewService.getReviewsByStudentIdOrderedByDate(studentId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Get reviews by course and student", description = "Retrieves all reviews for a specific course written by a specific student")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reviews retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Course or student not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/courses/{courseId}/students/{studentId}/reviews")
+    public ResponseEntity<List<ReviewResponse>> getReviewsByCourseAndStudent(
+            @Parameter(description = "Course ID", example = "123e4567-e89b-12d3-a456-426614174000")
+            @PathVariable UUID courseId,
+            @Parameter(description = "Student ID", example = "987fcdeb-51a2-43d1-9b12-345678901234")
+            @PathVariable UUID studentId) {
+        
+        List<ReviewResponse> response = reviewService.getReviewsByCourseIdAndStudentId(courseId, studentId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Count reviews by student", description = "Counts the number of reviews written by a specific student")
+    @ApiResponse(responseCode = "200", description = "Review count retrieved successfully",
+            content = @Content(schema = @Schema(implementation = ReviewCountResponse.class)))
+    @GetMapping("/students/{studentId}/reviews/count")
+    public ResponseEntity<ReviewCountResponse> countReviewsByStudent(
+            @Parameter(description = "Student ID", example = "987fcdeb-51a2-43d1-9b12-345678901234")
+            @PathVariable UUID studentId) {
+        
+        long count = reviewService.countReviewsByStudentId(studentId);
+        return ResponseEntity.ok(new ReviewCountResponse(count));
+    }
+
+    @Operation(summary = "Search reviews by student email", description = "Searches reviews by student email address")
+    @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
+    @GetMapping("/reviews/search/student/email")
+    public ResponseEntity<List<ReviewResponse>> searchReviewsByStudentEmail(
+            @Parameter(description = "Student email", example = "jane.smith@example.com")
+            @RequestParam String email) {
+        
+        List<ReviewResponse> response = reviewService.searchReviewsByStudentEmail(email);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Search reviews by student name", description = "Searches reviews by student name (partial match)")
+    @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
+    @GetMapping("/reviews/search/student/name")
+    public ResponseEntity<List<ReviewResponse>> searchReviewsByStudentName(
+            @Parameter(description = "Student name search term", example = "Jane")
+            @RequestParam String name) {
+        
+        List<ReviewResponse> response = reviewService.searchReviewsByStudentName(name);
+        return ResponseEntity.ok(response);
     }
 }

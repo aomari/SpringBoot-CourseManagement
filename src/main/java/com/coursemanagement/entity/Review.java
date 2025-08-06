@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * Entity class representing a review.
- * Has a many-to-one relationship with Course.
+ * Has a many-to-one relationship with Course and Student.
  */
 @Entity
 @Table(name = "reviews")
@@ -36,13 +36,19 @@ public class Review {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    // Many-to-one relationship with Student
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
+
     // Default constructor
     public Review() {}
 
     // Constructor with required fields
-    public Review(String comment, Course course) {
+    public Review(String comment, Course course, Student student) {
         this.comment = comment;
         this.course = course;
+        this.student = student;
     }
 
     // Getters and Setters
@@ -86,6 +92,14 @@ public class Review {
         this.course = course;
     }
 
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
     @Override
     public String toString() {
         return "Review{" +
@@ -94,6 +108,7 @@ public class Review {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", courseTitle=" + (course != null ? course.getTitle() : null) +
+                ", studentName=" + (student != null ? student.getFullName() : null) +
                 '}';
     }
 }

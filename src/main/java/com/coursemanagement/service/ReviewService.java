@@ -75,4 +75,34 @@ public interface ReviewService {
      * Count reviews by course ID.
      */
     long countReviewsByCourseId(UUID courseId);
+
+    /**
+     * Get reviews by student ID.
+     */
+    List<ReviewResponse> getReviewsByStudentId(UUID studentId);
+
+    /**
+     * Get reviews by student ID ordered by creation date (newest first).
+     */
+    List<ReviewResponse> getReviewsByStudentIdOrderedByDate(UUID studentId);
+
+    /**
+     * Get reviews by course ID and student ID.
+     */
+    List<ReviewResponse> getReviewsByCourseIdAndStudentId(UUID courseId, UUID studentId);
+
+    /**
+     * Count reviews by student ID.
+     */
+    long countReviewsByStudentId(UUID studentId);
+
+    /**
+     * Search reviews by student email.
+     */
+    List<ReviewResponse> searchReviewsByStudentEmail(String email);
+
+    /**
+     * Search reviews by student name.
+     */
+    List<ReviewResponse> searchReviewsByStudentName(String name);
 }

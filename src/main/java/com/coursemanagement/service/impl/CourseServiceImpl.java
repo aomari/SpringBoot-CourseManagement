@@ -220,12 +220,19 @@ public class CourseServiceImpl implements CourseService {
                 review.getCourse().getInstructor().getFullName()
         );
 
+        ReviewResponse.StudentInfo studentInfo = new ReviewResponse.StudentInfo(
+                review.getStudent().getId(),
+                review.getStudent().getFullName(),
+                review.getStudent().getEmail()
+        );
+
         return new ReviewResponse(
                 review.getId(),
                 review.getComment(),
                 review.getCreatedAt(),
                 review.getUpdatedAt(),
-                courseInfo
+                courseInfo,
+                studentInfo
         );
     }
 }

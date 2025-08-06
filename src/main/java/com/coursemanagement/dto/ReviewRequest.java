@@ -16,17 +16,17 @@ public class ReviewRequest {
     @Schema(description = "Review comment", example = "This course was excellent! Learned a lot about Spring Boot.", required = true)
     private String comment;
 
-    @NotNull(message = "Course ID is required")
-    @Schema(description = "ID of the course being reviewed", example = "123e4567-e89b-12d3-a456-426614174000", required = true)
-    private UUID courseId;
+    @NotNull(message = "Student ID is required")
+    @Schema(description = "ID of the student writing the review", example = "987fcdeb-51a2-43d1-9b12-345678901234", required = true)
+    private UUID studentId;
 
     // Default constructor
     public ReviewRequest() {}
 
     // Constructor with all fields
-    public ReviewRequest(String comment, UUID courseId) {
+    public ReviewRequest(String comment, UUID studentId) {
         this.comment = comment;
-        this.courseId = courseId;
+        this.studentId = studentId;
     }
 
     // Getters and Setters
@@ -38,19 +38,19 @@ public class ReviewRequest {
         this.comment = comment;
     }
 
-    public UUID getCourseId() {
-        return courseId;
+    public UUID getStudentId() {
+        return studentId;
     }
 
-    public void setCourseId(UUID courseId) {
-        this.courseId = courseId;
+    public void setStudentId(UUID studentId) {
+        this.studentId = studentId;
     }
 
     @Override
     public String toString() {
         return "ReviewRequest{" +
                 "comment='" + comment + '\'' +
-                ", courseId=" + courseId +
+                ", studentId=" + studentId +
                 '}';
     }
 }

@@ -175,7 +175,7 @@ Request Body:
 ```json
 {
   "comment": "This course was excellent! I learned a lot about Spring Boot and best practices.",
-  "courseId": "456e7890-e89b-12d3-a456-426614174001"
+  "studentId": "987fcdeb-51a2-43d1-9b12-345678901234"
 }
 ```
 
@@ -250,7 +250,7 @@ Request Body:
 ```json
 {
   "comment": "This course was outstanding! I learned a lot about Spring Boot, JPA, and microservices architecture.",
-  "courseId": "456e7890-e89b-12d3-a456-426614174001"
+  "studentId": "987fcdeb-51a2-43d1-9b12-345678901234"
 }
 ```
 
