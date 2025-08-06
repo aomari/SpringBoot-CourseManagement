@@ -1,8 +1,10 @@
 package com.coursemanagement.service.impl;
 
 import com.coursemanagement.dto.EnrollmentRequest;
+import com.coursemanagement.dto.EnrollmentResponse;
 import com.coursemanagement.dto.StudentRequest;
 import com.coursemanagement.dto.StudentResponse;
+import com.coursemanagement.dto.UnenrollmentResponse;
 import com.coursemanagement.entity.Course;
 import com.coursemanagement.entity.Student;
 import com.coursemanagement.exception.ResourceAlreadyExistsException;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -115,7 +118,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void enrollStudentInCourse(UUID studentId, EnrollmentRequest request) {
+    public EnrollmentResponse enrollStudentInCourse(UUID studentId, EnrollmentRequest request) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", studentId));
 
@@ -129,11 +132,29 @@ public class StudentServiceImpl implements StudentService {
         }
 
         student.enrollInCourse(course);
-        studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+        
+        // Create enrollment response
+        EnrollmentResponse.StudentInfo studentInfo = new EnrollmentResponse.StudentInfo(
+                savedStudent.getId(),
+                savedStudent.getFullName(),
+                savedStudent.getEmail()
+        );
+        
+        EnrollmentResponse.CourseInfo courseInfo = new EnrollmentResponse.CourseInfo(
+                course.getId(),
+                course.getTitle(),
+                course.getInstructor().getFullName()
+        );
+        
+        String message = String.format("Student %s successfully enrolled in course %s", 
+                savedStudent.getFullName(), course.getTitle());
+        
+        return new EnrollmentResponse(message, LocalDateTime.now(), studentInfo, courseInfo);
     }
 
     @Override
-    public void unenrollStudentFromCourse(UUID studentId, EnrollmentRequest request) {
+    public UnenrollmentResponse unenrollStudentFromCourse(UUID studentId, EnrollmentRequest request) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", studentId));
 
@@ -147,7 +168,25 @@ public class StudentServiceImpl implements StudentService {
         }
 
         student.unenrollFromCourse(course);
-        studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+        
+        // Create unenrollment response
+        UnenrollmentResponse.StudentInfo studentInfo = new UnenrollmentResponse.StudentInfo(
+                savedStudent.getId(),
+                savedStudent.getFullName(),
+                savedStudent.getEmail()
+        );
+        
+        UnenrollmentResponse.CourseInfo courseInfo = new UnenrollmentResponse.CourseInfo(
+                course.getId(),
+                course.getTitle(),
+                course.getInstructor().getFullName()
+        );
+        
+        String message = String.format("Student %s successfully unenrolled from course %s", 
+                savedStudent.getFullName(), course.getTitle());
+        
+        return new UnenrollmentResponse(message, LocalDateTime.now(), studentInfo, courseInfo);
     }
 
     @Override

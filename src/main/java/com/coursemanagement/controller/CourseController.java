@@ -1,7 +1,9 @@
 package com.coursemanagement.controller;
 
+import com.coursemanagement.dto.CountResponse;
 import com.coursemanagement.dto.CourseRequest;
 import com.coursemanagement.dto.CourseResponse;
+import com.coursemanagement.dto.DeletionResponse;
 import com.coursemanagement.exception.ErrorResponse;
 import com.coursemanagement.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,17 +105,19 @@ public class CourseController {
 
     @Operation(summary = "Delete course", description = "Deletes a course by ID (and all its reviews via database cascade)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Course deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Course deleted successfully",
+                    content = @Content(schema = @Schema(implementation = DeletionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Course not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(
+    public ResponseEntity<DeletionResponse> deleteCourse(
             @Parameter(description = "Course ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         courseService.deleteCourse(id);
-        return ResponseEntity.noContent().build();
+        DeletionResponse response = DeletionResponse.success(id, "Course");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get courses by instructor", description = "Retrieves all courses taught by a specific instructor")
@@ -188,13 +192,15 @@ public class CourseController {
     }
 
     @Operation(summary = "Count courses by instructor", description = "Counts the number of courses taught by an instructor")
-    @ApiResponse(responseCode = "200", description = "Course count retrieved successfully")
+    @ApiResponse(responseCode = "200", description = "Course count retrieved successfully",
+            content = @Content(schema = @Schema(implementation = CountResponse.class)))
     @GetMapping("/instructor/{instructorId}/count")
-    public ResponseEntity<Long> countCoursesByInstructor(
+    public ResponseEntity<CountResponse> countCoursesByInstructor(
             @Parameter(description = "Instructor ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID instructorId) {
         
         long count = courseService.countCoursesByInstructorId(instructorId);
-        return ResponseEntity.ok(count);
+        CountResponse response = CountResponse.of(count, "Course", "Total courses taught by instructor");
+        return ResponseEntity.ok(response);
     }
 }

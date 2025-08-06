@@ -1,5 +1,6 @@
 package com.coursemanagement.controller;
 
+import com.coursemanagement.dto.DeletionResponse;
 import com.coursemanagement.dto.StudentRequest;
 import com.coursemanagement.dto.StudentResponse;
 import com.coursemanagement.exception.ErrorResponse;
@@ -101,19 +102,21 @@ public class StudentController {
 
     @Operation(summary = "Delete student", description = "Deletes a student and removes all enrollments")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Student deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Student deleted successfully",
+                    content = @Content(schema = @Schema(implementation = DeletionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Student not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid UUID format",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(
+    public ResponseEntity<DeletionResponse> deleteStudent(
             @Parameter(description = "Student ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         studentService.deleteStudent(id);
-        return ResponseEntity.noContent().build();
+        DeletionResponse response = DeletionResponse.success(id, "Student");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get student courses", description = "Retrieves all courses that a student is enrolled in")

@@ -169,6 +169,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional(readOnly = true)
     public long countReviewsByCourseId(UUID courseId) {
+        // Validate course exists
+        if (!courseRepository.existsById(courseId)) {
+            throw new ResourceNotFoundException("Course", "id", courseId);
+        }
+        
         return reviewRepository.countByCourseId(courseId);
     }
 

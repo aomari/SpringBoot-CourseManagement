@@ -1,7 +1,10 @@
 package com.coursemanagement.controller;
 
+import com.coursemanagement.dto.CountResponse;
 import com.coursemanagement.dto.EnrollmentRequest;
+import com.coursemanagement.dto.EnrollmentResponse;
 import com.coursemanagement.dto.StudentResponse;
+import com.coursemanagement.dto.UnenrollmentResponse;
 import com.coursemanagement.exception.ErrorResponse;
 import com.coursemanagement.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +39,8 @@ public class EnrollmentController {
 
     @Operation(summary = "Enroll student in course", description = "Enrolls a student in a specific course")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Student enrolled successfully"),
+            @ApiResponse(responseCode = "200", description = "Student enrolled successfully",
+                    content = @Content(schema = @Schema(implementation = EnrollmentResponse.class))),
             @ApiResponse(responseCode = "404", description = "Student or course not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "409", description = "Student already enrolled in course",
@@ -45,31 +49,32 @@ public class EnrollmentController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/students/{id}/enroll")
-    public ResponseEntity<Void> enrollStudentInCourse(
+    public ResponseEntity<EnrollmentResponse> enrollStudentInCourse(
             @Parameter(description = "Student ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id,
             @Valid @RequestBody EnrollmentRequest request) {
         
-        studentService.enrollStudentInCourse(id, request);
-        return ResponseEntity.ok().build();
+        EnrollmentResponse response = studentService.enrollStudentInCourse(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Unenroll student from course", description = "Removes a student from a specific course")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Student unenrolled successfully"),
+            @ApiResponse(responseCode = "200", description = "Student unenrolled successfully",
+                    content = @Content(schema = @Schema(implementation = UnenrollmentResponse.class))),
             @ApiResponse(responseCode = "404", description = "Student, course, or enrollment not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/students/{id}/unenroll")
-    public ResponseEntity<Void> unenrollStudentFromCourse(
+    public ResponseEntity<UnenrollmentResponse> unenrollStudentFromCourse(
             @Parameter(description = "Student ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id,
             @Valid @RequestBody EnrollmentRequest request) {
         
-        studentService.unenrollStudentFromCourse(id, request);
-        return ResponseEntity.ok().build();
+        UnenrollmentResponse response = studentService.unenrollStudentFromCourse(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get students enrolled in course", description = "Retrieves all students enrolled in a specific course")
@@ -108,17 +113,19 @@ public class EnrollmentController {
 
     @Operation(summary = "Count students in course", description = "Returns the number of students enrolled in a course")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Student count retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Student count retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = CountResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid UUID format",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/courses/{id}/students/count")
-    public ResponseEntity<Long> countStudentsInCourse(
+    public ResponseEntity<CountResponse> countStudentsInCourse(
             @Parameter(description = "Course ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         long count = studentService.countStudentsInCourse(id);
-        return ResponseEntity.ok(count);
+        CountResponse response = CountResponse.of(count, "Student", "Total students enrolled in course");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get students by instructor", description = "Retrieves students enrolled in courses taught by a specific instructor")

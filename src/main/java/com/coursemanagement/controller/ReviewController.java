@@ -1,6 +1,7 @@
 package com.coursemanagement.controller;
 
-import com.coursemanagement.dto.ReviewCountResponse;
+import com.coursemanagement.dto.CountResponse;
+import com.coursemanagement.dto.DeletionResponse;
 import com.coursemanagement.dto.ReviewExistsResponse;
 import com.coursemanagement.dto.ReviewRequest;
 import com.coursemanagement.dto.ReviewResponse;
@@ -112,17 +113,19 @@ public class ReviewController {
 
     @Operation(summary = "Delete review", description = "Deletes a review by ID (course remains unaffected)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Review deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Review deleted successfully",
+                    content = @Content(schema = @Schema(implementation = DeletionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Review not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<Void> deleteReview(
+    public ResponseEntity<DeletionResponse> deleteReview(
             @Parameter(description = "Review ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         reviewService.deleteReview(id);
-        return ResponseEntity.noContent().build();
+        DeletionResponse response = DeletionResponse.success(id, "Review");
+        return ResponseEntity.ok(response);
     }
 
     // Additional query endpoints
@@ -190,17 +193,18 @@ public class ReviewController {
     @Operation(summary = "Count reviews for course", description = "Counts the number of reviews for a specific course")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Review count retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = ReviewCountResponse.class))),
+                    content = @Content(schema = @Schema(implementation = CountResponse.class))),
             @ApiResponse(responseCode = "404", description = "Course not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/courses/{courseId}/reviews/count")
-    public ResponseEntity<ReviewCountResponse> countReviewsForCourse(
+    public ResponseEntity<CountResponse> countReviewsForCourse(
             @Parameter(description = "Course ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID courseId) {
         
         long count = reviewService.countReviewsByCourseId(courseId);
-        return ResponseEntity.ok(new ReviewCountResponse(count));
+        CountResponse response = CountResponse.of(count, "Review", "Total reviews for course");
+        return ResponseEntity.ok(response);
     }
 
     // Student-related endpoints
@@ -238,14 +242,15 @@ public class ReviewController {
 
     @Operation(summary = "Count reviews by student", description = "Counts the number of reviews written by a specific student")
     @ApiResponse(responseCode = "200", description = "Review count retrieved successfully",
-            content = @Content(schema = @Schema(implementation = ReviewCountResponse.class)))
+            content = @Content(schema = @Schema(implementation = CountResponse.class)))
     @GetMapping("/students/{studentId}/reviews/count")
-    public ResponseEntity<ReviewCountResponse> countReviewsByStudent(
+    public ResponseEntity<CountResponse> countReviewsByStudent(
             @Parameter(description = "Student ID", example = "987fcdeb-51a2-43d1-9b12-345678901234")
             @PathVariable UUID studentId) {
         
         long count = reviewService.countReviewsByStudentId(studentId);
-        return ResponseEntity.ok(new ReviewCountResponse(count));
+        CountResponse response = CountResponse.of(count, "Review", "Total reviews written by student");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Search reviews by student email", description = "Searches reviews by student email address")

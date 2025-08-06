@@ -1,5 +1,6 @@
 package com.coursemanagement.controller;
 
+import com.coursemanagement.dto.DeletionResponse;
 import com.coursemanagement.dto.InstructorDetailsRequest;
 import com.coursemanagement.dto.InstructorDetailsResponse;
 import com.coursemanagement.exception.ErrorResponse;
@@ -97,17 +98,19 @@ public class InstructorDetailsController {
 
     @Operation(summary = "Delete instructor details", description = "Deletes instructor details by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Instructor details deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Instructor details deleted successfully",
+                    content = @Content(schema = @Schema(implementation = DeletionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Instructor details not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInstructorDetails(
+    public ResponseEntity<DeletionResponse> deleteInstructorDetails(
             @Parameter(description = "Instructor details ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         instructorDetailsService.deleteInstructorDetails(id);
-        return ResponseEntity.noContent().build();
+        DeletionResponse response = DeletionResponse.success(id, "InstructorDetails");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Search by YouTube channel", description = "Searches instructor details by YouTube channel")

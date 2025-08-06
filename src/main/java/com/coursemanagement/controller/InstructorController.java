@@ -1,5 +1,6 @@
 package com.coursemanagement.controller;
 
+import com.coursemanagement.dto.DeletionResponse;
 import com.coursemanagement.dto.InstructorRequest;
 import com.coursemanagement.dto.InstructorResponse;
 import com.coursemanagement.exception.ErrorResponse;
@@ -101,17 +102,19 @@ public class InstructorController {
 
     @Operation(summary = "Delete instructor", description = "Deletes an instructor by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Instructor deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Instructor deleted successfully",
+                    content = @Content(schema = @Schema(implementation = DeletionResponse.class))),
             @ApiResponse(responseCode = "404", description = "Instructor not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInstructor(
+    public ResponseEntity<DeletionResponse> deleteInstructor(
             @Parameter(description = "Instructor ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
         instructorService.deleteInstructor(id);
-        return ResponseEntity.noContent().build();
+        DeletionResponse response = DeletionResponse.success(id, "Instructor");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get instructor by email", description = "Retrieves an instructor by their email address")

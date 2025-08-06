@@ -1,8 +1,10 @@
 package com.coursemanagement.service;
 
 import com.coursemanagement.dto.EnrollmentRequest;
+import com.coursemanagement.dto.EnrollmentResponse;
 import com.coursemanagement.dto.StudentRequest;
 import com.coursemanagement.dto.StudentResponse;
+import com.coursemanagement.dto.UnenrollmentResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,12 +52,12 @@ public interface StudentService {
     /**
      * Enroll student in a course.
      */
-    void enrollStudentInCourse(UUID studentId, EnrollmentRequest request);
+    EnrollmentResponse enrollStudentInCourse(UUID studentId, EnrollmentRequest request);
 
     /**
      * Unenroll student from a course.
      */
-    void unenrollStudentFromCourse(UUID studentId, EnrollmentRequest request);
+    UnenrollmentResponse unenrollStudentFromCourse(UUID studentId, EnrollmentRequest request);
 
     /**
      * Get courses that a student is enrolled in.
