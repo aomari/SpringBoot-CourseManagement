@@ -305,7 +305,7 @@ class InstructorServiceTest {
             instructorWithoutDetails.setCreatedAt(LocalDateTime.now());
             instructorWithoutDetails.setUpdatedAt(LocalDateTime.now());
             
-            InstructorDetailsRequest newDetailsRequest = new InstructorDetailsRequest("https://youtube.com/@newchannel", "New hobby");
+            InstructorDetailsRequest newDetailsRequest = new InstructorDetailsRequest("https://youtube.com/@newchannel", "New hoppy");
             InstructorRequest updateRequest = new InstructorRequest("John", "Doe", "john.doe@example.com", newDetailsRequest);
             
             when(instructorRepository.findById(instructorId)).thenReturn(Optional.of(instructorWithoutDetails));

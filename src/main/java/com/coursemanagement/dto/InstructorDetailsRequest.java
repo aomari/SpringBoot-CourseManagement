@@ -15,7 +15,7 @@ public class InstructorDetailsRequest {
     @Schema(description = "YouTube channel of the instructor", example = "https://youtube.com/@johndoe", required = true)
     private String youtubeChannel;
 
-    @Size(max = 500, message = "Hobby must not exceed 500 characters")
+    @Size(max = 500, message = "hobby must not exceed 500 characters")
     @Schema(description = "Instructor's hobby", example = "Playing guitar and coding")
     private String hobby;
 

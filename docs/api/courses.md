@@ -120,7 +120,7 @@ Retrieve a specific course by its ID, including reviews and enrollment informati
     "email": "john.doe@example.com",
     "instructorDetails": {
       "youtubeChannel": "https://youtube.com/@johndoe",
-      "hobby": "Teaching Java and Spring Boot"
+      "hoppy": "Teaching Java and Spring Boot"
     }
   },
   "reviews": [

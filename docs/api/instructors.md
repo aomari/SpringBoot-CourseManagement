@@ -42,7 +42,7 @@ Create a new instructor with optional details.
   "email": "jane.smith@example.com",
   "instructorDetails": {
     "youtubeChannel": "https://youtube.com/@janesmith",
-    "hobby": "Photography and web development"
+    "hoppy": "Photography and web development"
   }
 }
 ```
@@ -60,7 +60,7 @@ Create a new instructor with optional details.
   "instructorDetails": {
     "id": "abc1234e-e89b-12d3-a456-426614174000",
     "youtubeChannel": "https://youtube.com/@janesmith",
-    "hobby": "Photography and web development",
+    "hoppy": "Photography and web development",
     "createdAt": "2023-12-01T10:30:00",
     "updatedAt": "2023-12-01T10:30:00"
   }
@@ -97,7 +97,7 @@ Retrieve all instructors in the system.
     "instructorDetails": {
       "id": "abc1234e-e89b-12d3-a456-426614174000",
       "youtubeChannel": "https://youtube.com/@janesmith",
-      "hobby": "Photography and web development"
+      "hoppy": "Photography and web development"
     }
   }
 ]
@@ -125,7 +125,7 @@ Retrieve a specific instructor by their ID.
   "instructorDetails": {
     "id": "abc1234e-e89b-12d3-a456-426614174000",
     "youtubeChannel": "https://youtube.com/@janesmith",
-    "hobby": "Photography and web development"
+    "hoppy": "Photography and web development"
   }
 }
 ```
@@ -147,7 +147,7 @@ Update an existing instructor's information.
   "email": "john.smith@example.com",
   "instructorDetails": {
     "youtubeChannel": "https://youtube.com/@johnsmith-updated",
-    "hobby": "Teaching and mentoring developers"
+    "hoppy": "Teaching and mentoring developers"
   }
 }
 ```
@@ -165,7 +165,7 @@ Update an existing instructor's information.
   "instructorDetails": {
     "id": "def5678f-e89b-12d3-a456-426614174000",
     "youtubeChannel": "https://youtube.com/@johnsmith-updated",
-    "hobby": "Teaching and mentoring developers",
+    "hoppy": "Teaching and mentoring developers",
     "updatedAt": "2023-12-01T11:45:00"
   }
 }
@@ -264,7 +264,7 @@ Create standalone instructor details (can be associated later).
 ```json
 {
   "youtubeChannel": "https://youtube.com/@johndoe",
-  "hobby": "Playing guitar and coding open source projects"
+  "hoppy": "Playing guitar and coding open source projects"
 }
 ```
 
@@ -273,7 +273,7 @@ Create standalone instructor details (can be associated later).
 {
   "id": "123e4567-e89b-12d3-a456-426614174000",
   "youtubeChannel": "https://youtube.com/@johndoe",
-  "hobby": "Playing guitar and coding open source projects",
+  "hoppy": "Playing guitar and coding open source projects",
   "createdAt": "2023-12-01T10:30:00",
   "updatedAt": "2023-12-01T10:30:00"
 }
@@ -295,7 +295,7 @@ Create standalone instructor details (can be associated later).
 ```json
 {
   "youtubeChannel": "https://youtube.com/@johndoe-updated",
-  "hobby": "Playing piano and teaching programming"
+  "hoppy": "Playing piano and teaching programming"
 }
 ```
 
@@ -310,12 +310,12 @@ Create standalone instructor details (can be associated later).
 #### Query Parameters
 - `channel` (string) - YouTube channel name or URL fragment
 
-### Search Details by Hobby
+### Search Details by hoppy
 
-**`GET /instructor-details/search/hobby?hobby={hobby}`**
+**`GET /instructor-details/search/hoppy?hoppy={hoppy}`**
 
 #### Query Parameters
-- `hobby` (string) - Hobby keyword
+- `hoppy` (string) - hoppy keyword
 
 ### Get Orphaned Details
 
@@ -402,7 +402,7 @@ curl -X POST http://localhost:8080/api/v1/instructors \
     "email": "alice.johnson@example.com",
     "instructorDetails": {
       "youtubeChannel": "https://youtube.com/@alicejohnson",
-      "hobby": "Machine learning and data science"
+      "hoppy": "Machine learning and data science"
     }
   }'
 ```

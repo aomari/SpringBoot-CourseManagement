@@ -119,8 +119,8 @@ class InstructorDetailsEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get hobby")
-        void shouldSetAndGetHobby() {
+        @DisplayName("Should set and get hoppy")
+        void shouldSetAndGethoppy() {
             // When
             instructorDetails.setHobby("Reading books");
 
@@ -129,8 +129,8 @@ class InstructorDetailsEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get hobby with null")
-        void shouldSetAndGetHobbyWithNull() {
+        @DisplayName("Should set and get hoppy with null")
+        void shouldSetAndGethoppyWithNull() {
             // When
             instructorDetails.setHobby(null);
 
@@ -139,8 +139,8 @@ class InstructorDetailsEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get hobby with empty string")
-        void shouldSetAndGetHobbyWithEmptyString() {
+        @DisplayName("Should set and get hoppy with empty string")
+        void shouldSetAndGethoppyWithEmptyString() {
             // When
             instructorDetails.setHobby("");
 
@@ -216,7 +216,7 @@ class InstructorDetailsEntityTest {
             // Then
             assertThat(toString).contains("InstructorDetails{");
             assertThat(toString).contains("youtubeChannel='https://youtube.com/@johndoe'");
-            assertThat(toString).contains("hobby='Playing guitar'");
+            assertThat(toString).contains("hoppy='Playing guitar'");
         }
 
         @Test
@@ -231,7 +231,7 @@ class InstructorDetailsEntityTest {
             // Then
             assertThat(toString).contains("InstructorDetails{");
             assertThat(toString).contains("youtubeChannel='null'");
-            assertThat(toString).contains("hobby='null'");
+            assertThat(toString).contains("hoppy='null'");
         }
 
         @Test
@@ -246,7 +246,7 @@ class InstructorDetailsEntityTest {
             // Then
             assertThat(toString).contains("InstructorDetails{");
             assertThat(toString).contains("youtubeChannel=''");
-            assertThat(toString).contains("hobby=''");
+            assertThat(toString).contains("hoppy=''");
         }
     }
 
@@ -315,16 +315,16 @@ class InstructorDetailsEntityTest {
         }
 
         @Test
-        @DisplayName("Should handle very long hobby description")
-        void shouldHandleVeryLongHobbyDescription() {
+        @DisplayName("Should handle very long hoppy description")
+        void shouldHandleVeryLonghoppyDescription() {
             // Given
-            String longHobby = "Playing guitar and singing and composing music and " + "performing ".repeat(50);
+            String longhoppy = "Playing guitar and singing and composing music and " + "performing ".repeat(50);
 
             // When
-            instructorDetails.setHobby(longHobby);
+            instructorDetails.setHobby(longhoppy);
 
             // Then
-            assertThat(instructorDetails.getHobby()).isEqualTo(longHobby);
+            assertThat(instructorDetails.getHobby()).isEqualTo(longhoppy);
         }
 
         @Test
@@ -341,29 +341,29 @@ class InstructorDetailsEntityTest {
         }
 
         @Test
-        @DisplayName("Should handle special characters in hobby")
-        void shouldHandleSpecialCharactersInHobby() {
+        @DisplayName("Should handle special characters in hoppy")
+        void shouldHandleSpecialCharactersInhoppy() {
             // Given
-            String specialHobby = "Playing guitar 🎸 & singing 🎤 (rock music)";
+            String specialhoppy = "Playing guitar 🎸 & singing 🎤 (rock music)";
 
             // When
-            instructorDetails.setHobby(specialHobby);
+            instructorDetails.setHobby(specialhoppy);
 
             // Then
-            assertThat(instructorDetails.getHobby()).isEqualTo(specialHobby);
+            assertThat(instructorDetails.getHobby()).isEqualTo(specialhoppy);
         }
 
         @Test
-        @DisplayName("Should handle hobby with line breaks")
-        void shouldHandleHobbyWithLineBreaks() {
+        @DisplayName("Should handle hoppy with line breaks")
+        void shouldHandlehoppyWithLineBreaks() {
             // Given
-            String multilineHobby = "Playing guitar\nComposing music\nPerforming live";
+            String multilinehoppy = "Playing guitar\nComposing music\nPerforming live";
 
             // When
-            instructorDetails.setHobby(multilineHobby);
+            instructorDetails.setHobby(multilinehoppy);
 
             // Then
-            assertThat(instructorDetails.getHobby()).isEqualTo(multilineHobby);
+            assertThat(instructorDetails.getHobby()).isEqualTo(multilinehoppy);
             assertThat(instructorDetails.getHobby()).contains("\n");
         }
 

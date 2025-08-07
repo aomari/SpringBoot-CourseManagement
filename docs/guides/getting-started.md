@@ -283,7 +283,7 @@ curl -X POST http://localhost:8080/api/v1/instructors \
     "email": "john.doe@example.com",
     "instructorDetails": {
       "youtubeChannel": "https://youtube.com/@johndoe",
-      "hobby": "Teaching Java and Spring Boot"
+      "hoppy": "Teaching Java and Spring Boot"
     }
   }'
 ```

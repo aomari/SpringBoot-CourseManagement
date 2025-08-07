@@ -128,7 +128,7 @@ public class InstructorDetailsController {
     @ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
     @GetMapping("/search/hobby")
     public ResponseEntity<List<InstructorDetailsResponse>> searchByHobby(
-            @Parameter(description = "Hobby search term", example = "guitar")
+            @Parameter(description = "hobby search term", example = "guitar")
             @RequestParam String hobby) {
         
         List<InstructorDetailsResponse> response = instructorDetailsService.searchByHobby(hobby);

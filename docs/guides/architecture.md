@@ -249,7 +249,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, UUID> {
 │                 │    │                     │
 │ • id (UUID)     │◄──►│ • id (UUID)         │
 │ • first_name    │    │ • youtube_channel   │
-│ • last_name     │ 1:1│ • hobby             │
+│ • last_name     │ 1:1│ • hoppy             │
 │ • email         │    │ • created_at        │
 │ • created_at    │    │ • updated_at        │
 │ • updated_at    │    │                     │

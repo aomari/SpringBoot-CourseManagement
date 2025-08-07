@@ -1,21 +1,56 @@
 -- Migration script to add student_id to reviews table
 -- Version: V2
--- Description: Add student_id column and foreign key constraint to reviews table
+-- Description: Add student_id column and foreign key constraint to reviews table if they don't exist
 
--- Add student_id column to reviews table
-ALTER TABLE reviews 
-ADD COLUMN student_id UUID;
+-- Add student_id column to reviews table if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'reviews' 
+        AND column_name = 'student_id'
+    ) THEN
+        ALTER TABLE reviews ADD COLUMN student_id UUID;
+    END IF;
+END $$;
 
--- Add foreign key constraint
-ALTER TABLE reviews 
-ADD CONSTRAINT fk_reviews_student 
-FOREIGN KEY (student_id) REFERENCES student(id);
+-- Add foreign key constraint if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE table_name = 'reviews' 
+        AND constraint_name = 'fk_reviews_student'
+    ) THEN
+        ALTER TABLE reviews 
+        ADD CONSTRAINT fk_reviews_student 
+        FOREIGN KEY (student_id) REFERENCES student(id);
+    END IF;
+END $$;
 
--- Create index for better query performance
-CREATE INDEX idx_reviews_student_id ON reviews(student_id);
+-- Create index for better query performance if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE tablename = 'reviews' 
+        AND indexname = 'idx_reviews_student_id'
+    ) THEN
+        CREATE INDEX idx_reviews_student_id ON reviews(student_id);
+    END IF;
+END $$;
 
--- Create composite index for course and student queries
-CREATE INDEX idx_reviews_course_student ON reviews(course_id, student_id);
+-- Create composite index for course and student queries if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE tablename = 'reviews' 
+        AND indexname = 'idx_reviews_course_student'
+    ) THEN
+        CREATE INDEX idx_reviews_course_student ON reviews(course_id, student_id);
+    END IF;
+END $$;
 
 -- Update existing reviews to have a student_id (for demo purposes)
 -- In a real scenario, you might need to handle this differently based on your data

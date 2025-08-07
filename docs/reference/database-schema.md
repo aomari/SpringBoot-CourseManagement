@@ -30,7 +30,7 @@ erDiagram
     INSTRUCTOR_DETAILS {
         uuid id PK
         text youtube_channel
-        text hobby
+        text hoppy
         timestamp created_at
         timestamp updated_at
     }
@@ -119,20 +119,20 @@ Extended instructor profile information.
 CREATE TABLE instructor_details (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     youtube_channel TEXT,
-    hobby TEXT,
+    hoppy TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Indexes
 CREATE INDEX idx_instructor_details_youtube ON instructor_details(youtube_channel);
-CREATE INDEX idx_instructor_details_hobby ON instructor_details(hobby);
+CREATE INDEX idx_instructor_details_hoppy ON instructor_details(hoppy);
 ```
 
 **Columns:**
 - `id`: Primary key, UUID
 - `youtube_channel`: Instructor's YouTube channel URL (optional)
-- `hobby`: Instructor's hobbies or interests (optional)
+- `hoppy`: Instructor's hobbies or interests (optional)
 - `created_at`: Record creation timestamp
 - `updated_at`: Last modification timestamp
 
