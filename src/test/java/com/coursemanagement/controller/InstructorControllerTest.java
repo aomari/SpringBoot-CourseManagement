@@ -10,6 +10,7 @@ import com.coursemanagement.service.InstructorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ class InstructorControllerTest {
     class CreateInstructorEndpointTests {
 
         @Test
-        @DisplayName("POST /api/instructors - Should create instructor successfully")
+        @DisplayName("POST /api/v1/instructors - Should create instructor successfully")
         void shouldCreateInstructorSuccessfully() throws Exception {
             // Given
             when(instructorService.createInstructor(any(InstructorRequest.class))).thenReturn(instructorResponse);
@@ -103,23 +104,20 @@ class InstructorControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(instructorRequest)))
                     .andDo(print())
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Instructor created successfully"))
-                    .andExpect(jsonPath("$.data.id").value(instructorId.toString()))
-                    .andExpect(jsonPath("$.data.firstName").value("John"))
-                    .andExpect(jsonPath("$.data.lastName").value("Doe"))
-                    .andExpect(jsonPath("$.data.email").value("john.doe@example.com"))
-                    .andExpect(jsonPath("$.data.fullName").value("John Doe"))
-                    .andExpect(jsonPath("$.data.instructorDetails").exists())
-                    .andExpect(jsonPath("$.data.instructorDetails.youtubeChannel").value("https://youtube.com/@johndoe"))
-                    .andExpect(jsonPath("$.data.instructorDetails.hobby").value("Playing guitar"));
+                                    .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(instructorId.toString()))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
+                                    .andExpect(jsonPath("$.instructorDetails").exists())
+                                    .andExpect(jsonPath("$.instructorDetails.youtubeChannel").value("https://youtube.com/@johndoe"))
+                .andExpect(jsonPath("$.instructorDetails.hobby").value("Playing guitar"));
 
             verify(instructorService).createInstructor(any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("POST /api/instructors - Should create instructor without details successfully")
+        @DisplayName("POST /api/v1/instructors - Should create instructor without details successfully")
         void shouldCreateInstructorWithoutDetailsSuccessfully() throws Exception {
             // Given
             InstructorRequest requestWithoutDetails = new InstructorRequest("Jane", "Smith", "jane.smith@example.com");
@@ -141,17 +139,17 @@ class InstructorControllerTest {
                     .content(objectMapper.writeValueAsString(requestWithoutDetails)))
                     .andDo(print())
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.data.firstName").value("Jane"))
-                    .andExpect(jsonPath("$.data.lastName").value("Smith"))
-                    .andExpect(jsonPath("$.data.email").value("jane.smith@example.com"))
-                    .andExpect(jsonPath("$.data.instructorDetails").doesNotExist());
+                    .andExpect(jsonPath("$.firstName").exists())
+                    .andExpect(jsonPath("$.firstName").value("Jane"))
+                    .andExpect(jsonPath("$.lastName").value("Smith"))
+                    .andExpect(jsonPath("$.email").value("jane.smith@example.com"))
+                    .andExpect(jsonPath("$.instructorDetails").doesNotExist());
 
             verify(instructorService).createInstructor(any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("POST /api/instructors - Should return 409 when instructor already exists")
+        @DisplayName("POST /api/v1/instructors - Should return 409 when instructor already exists")
         void shouldReturn409WhenInstructorAlreadyExists() throws Exception {
             // Given
             when(instructorService.createInstructor(any(InstructorRequest.class)))
@@ -163,14 +161,14 @@ class InstructorControllerTest {
                     .content(objectMapper.writeValueAsString(instructorRequest)))
                     .andDo(print())
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(409))
                     .andExpect(jsonPath("$.message").value(containsString("Instructor already exists with email: john.doe@example.com")));
 
             verify(instructorService).createInstructor(any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("POST /api/instructors - Should return 400 for invalid request data")
+        @DisplayName("POST /api/v1/instructors - Should return 400 for invalid request data")
         void shouldReturn400ForInvalidRequestData() throws Exception {
             // Given - Invalid request with missing required fields
             InstructorRequest invalidRequest = new InstructorRequest("", "", "invalid-email");
@@ -181,7 +179,7 @@ class InstructorControllerTest {
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value(containsString("Validation failed")));
 
             verify(instructorService, never()).createInstructor(any(InstructorRequest.class));
@@ -193,44 +191,43 @@ class InstructorControllerTest {
     class GetInstructorEndpointTests {
 
         @Test
-        @DisplayName("GET /api/instructors/{id} - Should get instructor by ID successfully")
+        @DisplayName("GET /api/v1/instructors/{id} - Should get instructor by ID successfully")
         void shouldGetInstructorByIdSuccessfully() throws Exception {
             // Given
             when(instructorService.getInstructorById(instructorId)).thenReturn(instructorResponse);
 
             // When & Then
-            mockMvc.perform(get("/api/instructors/{id}", instructorId))
+            mockMvc.perform(get("/api/v1/instructors/{id}", instructorId))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Instructor retrieved successfully"))
-                    .andExpect(jsonPath("$.data.id").value(instructorId.toString()))
-                    .andExpect(jsonPath("$.data.firstName").value("John"))
-                    .andExpect(jsonPath("$.data.lastName").value("Doe"))
-                    .andExpect(jsonPath("$.data.email").value("john.doe@example.com"));
+                    .andExpect(jsonPath("$.firstName").exists())
+                    .andExpect(jsonPath("$.id").value(instructorId.toString()))
+                    .andExpect(jsonPath("$.firstName").value("John"))
+                    .andExpect(jsonPath("$.lastName").value("Doe"))
+                    .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
             verify(instructorService).getInstructorById(instructorId);
         }
 
         @Test
-        @DisplayName("GET /api/instructors/{id} - Should return 404 when instructor not found")
+        @DisplayName("GET /api/v1/instructors/{id} - Should return 404 when instructor not found")
         void shouldReturn404WhenInstructorNotFound() throws Exception {
             // Given
             when(instructorService.getInstructorById(instructorId))
                 .thenThrow(new ResourceNotFoundException("Instructor", "id", instructorId));
 
             // When & Then
-            mockMvc.perform(get("/api/instructors/{id}", instructorId))
+            mockMvc.perform(get("/api/v1/instructors/{id}", instructorId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(404))
                     .andExpect(jsonPath("$.message").value(containsString("Instructor not found")));
 
             verify(instructorService).getInstructorById(instructorId);
         }
 
         @Test
-        @DisplayName("GET /api/instructors - Should get all instructors successfully")
+        @DisplayName("GET /api/v1/instructors - Should get all instructors successfully")
         void shouldGetAllInstructorsSuccessfully() throws Exception {
             // Given
             InstructorResponse instructor2 = new InstructorResponse(
@@ -250,27 +247,26 @@ class InstructorControllerTest {
             mockMvc.perform(get("/api/v1/instructors"))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Instructors retrieved successfully"))
-                    .andExpect(jsonPath("$.data", hasSize(2)))
-                    .andExpect(jsonPath("$.data[0].firstName").value("John"))
-                    .andExpect(jsonPath("$.data[1].firstName").value("Jane"));
+                    .andExpect(jsonPath("$[0].firstName").exists())
+                                    .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[1].firstName").value("Jane"));
 
             verify(instructorService).getAllInstructors();
         }
 
         @Test
-        @DisplayName("GET /api/instructors/email/{email} - Should get instructor by email successfully")
+        @DisplayName("GET /api/v1/instructors/email/{email} - Should get instructor by email successfully")
         void shouldGetInstructorByEmailSuccessfully() throws Exception {
             // Given
             when(instructorService.getInstructorByEmail("john.doe@example.com")).thenReturn(instructorResponse);
 
             // When & Then
-            mockMvc.perform(get("/api/instructors/email/{email}", "john.doe@example.com"))
+            mockMvc.perform(get("/api/v1/instructors/email/{email}", "john.doe@example.com"))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.data.email").value("john.doe@example.com"));
+                    .andExpect(jsonPath("$.firstName").exists())
+                    .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
             verify(instructorService).getInstructorByEmail("john.doe@example.com");
         }
@@ -281,7 +277,7 @@ class InstructorControllerTest {
     class UpdateInstructorEndpointTests {
 
         @Test
-        @DisplayName("PUT /api/instructors/{id} - Should update instructor successfully")
+        @DisplayName("PUT /api/v1/instructors/{id} - Should update instructor successfully")
         void shouldUpdateInstructorSuccessfully() throws Exception {
             // Given
             InstructorRequest updateRequest = new InstructorRequest("John Updated", "Doe Updated", "john.updated@example.com");
@@ -299,52 +295,51 @@ class InstructorControllerTest {
                 .thenReturn(updatedResponse);
 
             // When & Then
-            mockMvc.perform(put("/api/instructors/{id}", instructorId)
+            mockMvc.perform(put("/api/v1/instructors/{id}", instructorId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(updateRequest)))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Instructor updated successfully"))
-                    .andExpect(jsonPath("$.data.firstName").value("John Updated"))
-                    .andExpect(jsonPath("$.data.lastName").value("Doe Updated"))
-                    .andExpect(jsonPath("$.data.email").value("john.updated@example.com"));
+                    .andExpect(jsonPath("$.firstName").exists())
+                    .andExpect(jsonPath("$.firstName").value("John Updated"))
+                    .andExpect(jsonPath("$.lastName").value("Doe Updated"))
+                    .andExpect(jsonPath("$.email").value("john.updated@example.com"));
 
             verify(instructorService).updateInstructor(eq(instructorId), any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("PUT /api/instructors/{id} - Should return 404 when updating non-existent instructor")
+        @DisplayName("PUT /api/v1/instructors/{id} - Should return 404 when updating non-existent instructor")
         void shouldReturn404WhenUpdatingNonExistentInstructor() throws Exception {
             // Given
             when(instructorService.updateInstructor(eq(instructorId), any(InstructorRequest.class)))
                 .thenThrow(new ResourceNotFoundException("Instructor", "id", instructorId));
 
             // When & Then
-            mockMvc.perform(put("/api/instructors/{id}", instructorId)
+            mockMvc.perform(put("/api/v1/instructors/{id}", instructorId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(instructorRequest)))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.success").value(false));
+                    .andExpect(jsonPath("$.status").value(404));
 
             verify(instructorService).updateInstructor(eq(instructorId), any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("PUT /api/instructors/{id} - Should return 409 when updating to existing email")
+        @DisplayName("PUT /api/v1/instructors/{id} - Should return 409 when updating to existing email")
         void shouldReturn409WhenUpdatingToExistingEmail() throws Exception {
             // Given
             when(instructorService.updateInstructor(eq(instructorId), any(InstructorRequest.class)))
                 .thenThrow(new ResourceAlreadyExistsException("Instructor", "email", "existing@example.com"));
 
             // When & Then
-            mockMvc.perform(put("/api/instructors/{id}", instructorId)
+            mockMvc.perform(put("/api/v1/instructors/{id}", instructorId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(instructorRequest)))
                     .andDo(print())
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.success").value(false));
+                    .andExpect(jsonPath("$.status").value(409));
 
             verify(instructorService).updateInstructor(eq(instructorId), any(InstructorRequest.class));
         }
@@ -355,33 +350,32 @@ class InstructorControllerTest {
     class DeleteInstructorEndpointTests {
 
         @Test
-        @DisplayName("DELETE /api/instructors/{id} - Should delete instructor successfully")
+        @DisplayName("DELETE /api/v1/instructors/{id} - Should delete instructor successfully")
         void shouldDeleteInstructorSuccessfully() throws Exception {
             // Given
             doNothing().when(instructorService).deleteInstructor(instructorId);
 
             // When & Then
-            mockMvc.perform(delete("/api/instructors/{id}", instructorId))
+            mockMvc.perform(delete("/api/v1/instructors/{id}", instructorId))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.message").value("Instructor deleted successfully"));
 
             verify(instructorService).deleteInstructor(instructorId);
         }
 
         @Test
-        @DisplayName("DELETE /api/instructors/{id} - Should return 404 when deleting non-existent instructor")
+        @DisplayName("DELETE /api/v1/instructors/{id} - Should return 404 when deleting non-existent instructor")
         void shouldReturn404WhenDeletingNonExistentInstructor() throws Exception {
             // Given
             doThrow(new ResourceNotFoundException("Instructor", "id", instructorId))
                 .when(instructorService).deleteInstructor(instructorId);
 
             // When & Then
-            mockMvc.perform(delete("/api/instructors/{id}", instructorId))
+            mockMvc.perform(delete("/api/v1/instructors/{id}", instructorId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.success").value(false));
+                    .andExpect(jsonPath("$.status").value(404));
 
             verify(instructorService).deleteInstructor(instructorId);
         }
@@ -392,44 +386,44 @@ class InstructorControllerTest {
     class SearchAndFilterEndpointTests {
 
         @Test
-        @DisplayName("GET /api/instructors/search - Should search instructors by name successfully")
+        @DisplayName("GET /api/v1/instructors/search - Should search instructors by name successfully")
         void shouldSearchInstructorsByNameSuccessfully() throws Exception {
             // Given
             List<InstructorResponse> searchResults = Arrays.asList(instructorResponse);
             when(instructorService.searchInstructorsByName("John")).thenReturn(searchResults);
 
             // When & Then
-            mockMvc.perform(get("/api/instructors/search")
+            mockMvc.perform(get("/api/v1/instructors/search")
                     .param("name", "John"))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.data", hasSize(1)))
-                    .andExpect(jsonPath("$.data[0].firstName").value("John"));
+                    .andExpect(jsonPath("$[0].firstName").exists())
+                                    .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].firstName").value("John"));
 
             verify(instructorService).searchInstructorsByName("John");
         }
 
         @Test
-        @DisplayName("GET /api/instructors/with-details - Should get instructors with details successfully")
+        @DisplayName("GET /api/v1/instructors/with-details - Should get instructors with details successfully")
         void shouldGetInstructorsWithDetailsSuccessfully() throws Exception {
             // Given
             List<InstructorResponse> instructorsWithDetails = Arrays.asList(instructorResponse);
             when(instructorService.getInstructorsWithDetails()).thenReturn(instructorsWithDetails);
 
             // When & Then
-            mockMvc.perform(get("/api/instructors/with-details"))
+            mockMvc.perform(get("/api/v1/instructors/with-details"))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.data", hasSize(1)))
-                    .andExpect(jsonPath("$.data[0].instructorDetails").exists());
+                    .andExpect(jsonPath("$[0].firstName").exists())
+                                    .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].instructorDetails").exists());
 
             verify(instructorService).getInstructorsWithDetails();
         }
 
         @Test
-        @DisplayName("GET /api/instructors/without-details - Should get instructors without details successfully")
+        @DisplayName("GET /api/v1/instructors/without-details - Should get instructors without details successfully")
         void shouldGetInstructorsWithoutDetailsSuccessfully() throws Exception {
             // Given
             InstructorResponse instructorWithoutDetails = new InstructorResponse(
@@ -445,12 +439,12 @@ class InstructorControllerTest {
             when(instructorService.getInstructorsWithoutDetails()).thenReturn(instructorsWithoutDetails);
 
             // When & Then
-            mockMvc.perform(get("/api/instructors/without-details"))
+            mockMvc.perform(get("/api/v1/instructors/without-details"))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.data", hasSize(1)))
-                    .andExpect(jsonPath("$.data[0].instructorDetails").doesNotExist());
+                    .andExpect(jsonPath("$[0].firstName").exists())
+                                    .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].instructorDetails").doesNotExist());
 
             verify(instructorService).getInstructorsWithoutDetails();
         }
@@ -461,25 +455,24 @@ class InstructorControllerTest {
     class InstructorDetailsManagementEndpointTests {
 
         @Test
-        @DisplayName("POST /api/instructors/{instructorId}/details/{detailsId} - Should add instructor details successfully")
+        @DisplayName("PUT /api/v1/instructors/{instructorId}/details/{detailsId} - Should add instructor details successfully")
         void shouldAddInstructorDetailsSuccessfully() throws Exception {
             // Given
             when(instructorService.addInstructorDetails(instructorId, instructorDetailsId))
                 .thenReturn(instructorResponse);
 
             // When & Then
-            mockMvc.perform(post("/api/instructors/{instructorId}/details/{detailsId}", instructorId, instructorDetailsId))
+            mockMvc.perform(put("/api/v1/instructors/{instructorId}/details/{detailsId}", instructorId, instructorDetailsId))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Instructor details added successfully"))
-                    .andExpect(jsonPath("$.data.instructorDetails").exists());
+                    .andExpect(jsonPath("$.firstName").exists())
+                    .andExpect(jsonPath("$.instructorDetails").exists());
 
             verify(instructorService).addInstructorDetails(instructorId, instructorDetailsId);
         }
 
         @Test
-        @DisplayName("DELETE /api/instructors/{instructorId}/details - Should remove instructor details successfully")
+        @DisplayName("DELETE /api/v1/instructors/{instructorId}/details - Should remove instructor details successfully")
         void shouldRemoveInstructorDetailsSuccessfully() throws Exception {
             // Given
             InstructorResponse responseWithoutDetails = new InstructorResponse(
@@ -494,44 +487,43 @@ class InstructorControllerTest {
             when(instructorService.removeInstructorDetails(instructorId)).thenReturn(responseWithoutDetails);
 
             // When & Then
-            mockMvc.perform(delete("/api/instructors/{instructorId}/details", instructorId))
+            mockMvc.perform(delete("/api/v1/instructors/{instructorId}/details", instructorId))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success").value(true))
-                    .andExpect(jsonPath("$.message").value("Instructor details removed successfully"))
-                    .andExpect(jsonPath("$.data.instructorDetails").doesNotExist());
+                    .andExpect(jsonPath("$.firstName").exists())
+                    .andExpect(jsonPath("$.instructorDetails").doesNotExist());
 
             verify(instructorService).removeInstructorDetails(instructorId);
         }
 
         @Test
-        @DisplayName("POST /api/instructors/{instructorId}/details/{detailsId} - Should return 404 when instructor not found")
+        @DisplayName("PUT /api/v1/instructors/{instructorId}/details/{detailsId} - Should return 404 when instructor not found")
         void shouldReturn404WhenInstructorNotFoundForAddingDetails() throws Exception {
             // Given
             when(instructorService.addInstructorDetails(instructorId, instructorDetailsId))
                 .thenThrow(new ResourceNotFoundException("Instructor", "id", instructorId));
 
             // When & Then
-            mockMvc.perform(post("/api/instructors/{instructorId}/details/{detailsId}", instructorId, instructorDetailsId))
+            mockMvc.perform(put("/api/v1/instructors/{instructorId}/details/{detailsId}", instructorId, instructorDetailsId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.success").value(false));
+                    .andExpect(jsonPath("$.status").value(404));
 
             verify(instructorService).addInstructorDetails(instructorId, instructorDetailsId);
         }
 
         @Test
-        @DisplayName("POST /api/instructors/{instructorId}/details/{detailsId} - Should return 404 when details not found")
+        @DisplayName("PUT /api/v1/instructors/{instructorId}/details/{detailsId} - Should return 404 when details not found")
         void shouldReturn404WhenDetailsNotFoundForAdding() throws Exception {
             // Given
             when(instructorService.addInstructorDetails(instructorId, instructorDetailsId))
                 .thenThrow(new ResourceNotFoundException("InstructorDetails", "id", instructorDetailsId));
 
             // When & Then
-            mockMvc.perform(post("/api/instructors/{instructorId}/details/{detailsId}", instructorId, instructorDetailsId))
+            mockMvc.perform(put("/api/v1/instructors/{instructorId}/details/{detailsId}", instructorId, instructorDetailsId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.success").value(false));
+                    .andExpect(jsonPath("$.status").value(404));
 
             verify(instructorService).addInstructorDetails(instructorId, instructorDetailsId);
         }
@@ -542,7 +534,7 @@ class InstructorControllerTest {
     class ValidationTests {
 
         @Test
-        @DisplayName("POST /api/instructors - Should validate required fields")
+        @DisplayName("POST /api/v1/instructors - Should validate required fields")
         void shouldValidateRequiredFields() throws Exception {
             // Given - Request with null/empty required fields
             InstructorRequest invalidRequest = new InstructorRequest();
@@ -553,14 +545,14 @@ class InstructorControllerTest {
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value(containsString("Validation failed")));
 
             verify(instructorService, never()).createInstructor(any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("POST /api/instructors - Should validate email format")
+        @DisplayName("POST /api/v1/instructors - Should validate email format")
         void shouldValidateEmailFormat() throws Exception {
             // Given - Request with invalid email format
             InstructorRequest invalidRequest = new InstructorRequest("John", "Doe", "invalid-email-format");
@@ -571,14 +563,14 @@ class InstructorControllerTest {
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value(containsString("Validation failed")));
 
             verify(instructorService, never()).createInstructor(any(InstructorRequest.class));
         }
 
         @Test
-        @DisplayName("POST /api/instructors - Should validate field lengths")
+        @DisplayName("POST /api/v1/instructors - Should validate field lengths")
         void shouldValidateFieldLengths() throws Exception {
             // Given - Request with fields exceeding maximum length
             String longString = "a".repeat(101); // Exceeds 100 character limit
@@ -590,7 +582,7 @@ class InstructorControllerTest {
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value(containsString("Validation failed")));
 
             verify(instructorService, never()).createInstructor(any(InstructorRequest.class));

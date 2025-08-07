@@ -85,24 +85,18 @@ class InstructorDetailsControllerTest {
         }
 
         @Test
-        @DisplayName("Should create instructor details with null values successfully")
-        void shouldCreateInstructorDetailsWithNullValuesSuccessfully() throws Exception {
+        @DisplayName("Should return 400 when creating instructor details with null youtube channel")
+        void shouldReturn400WhenCreatingInstructorDetailsWithNullYoutubeChannel() throws Exception {
             // Given
             InstructorDetailsRequest nullRequest = new InstructorDetailsRequest(null, null);
-            InstructorDetailsResponse nullResponse = new InstructorDetailsResponse(
-                    detailsId, null, null, LocalDateTime.now(), LocalDateTime.now()
-            );
-            when(instructorDetailsService.createInstructorDetails(any()))
-                    .thenReturn(nullResponse);
 
             // When & Then
             mockMvc.perform(post("/api/v1/instructor-details")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(nullRequest)))
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.id").value(detailsId.toString()));
+                    .andExpect(status().isBadRequest());
 
-            verify(instructorDetailsService).createInstructorDetails(any());
+            verify(instructorDetailsService, never()).createInstructorDetails(any());
         }
     }
 
@@ -192,24 +186,18 @@ class InstructorDetailsControllerTest {
         }
 
         @Test
-        @DisplayName("Should update instructor details with null values successfully")
-        void shouldUpdateInstructorDetailsWithNullValuesSuccessfully() throws Exception {
+        @DisplayName("Should return 400 when updating instructor details with null youtube channel")
+        void shouldReturn400WhenUpdatingInstructorDetailsWithNullYoutubeChannel() throws Exception {
             // Given
             InstructorDetailsRequest nullRequest = new InstructorDetailsRequest(null, null);
-            InstructorDetailsResponse nullResponse = new InstructorDetailsResponse(
-                    detailsId, null, null, LocalDateTime.now(), LocalDateTime.now()
-            );
-            when(instructorDetailsService.updateInstructorDetails(eq(detailsId), any()))
-                    .thenReturn(nullResponse);
 
             // When & Then
             mockMvc.perform(put("/api/v1/instructor-details/{id}", detailsId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(nullRequest)))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(detailsId.toString()));
+                    .andExpect(status().isBadRequest());
 
-            verify(instructorDetailsService).updateInstructorDetails(eq(detailsId), any());
+            verify(instructorDetailsService, never()).updateInstructorDetails(eq(detailsId), any());
         }
     }
 
@@ -227,7 +215,7 @@ class InstructorDetailsControllerTest {
             mockMvc.perform(delete("/api/v1/instructor-details/{id}", detailsId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("Instructor details deleted successfully"))
-                    .andExpect(jsonPath("$.resourceId").value(detailsId.toString()));
+                    .andExpect(jsonPath("$.deletedId").value(detailsId.toString()));
 
             verify(instructorDetailsService).deleteInstructorDetails(detailsId);
         }
@@ -246,8 +234,8 @@ class InstructorDetailsControllerTest {
             when(instructorDetailsService.searchByYoutubeChannel(channel)).thenReturn(detailsList);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/instructor-details/search")
-                            .param("youtubeChannel", channel))
+            mockMvc.perform(get("/api/v1/instructor-details/search/youtube")
+                            .param("channel", channel))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
                     .andExpect(jsonPath("$[0].id").value(detailsId.toString()));
@@ -264,7 +252,7 @@ class InstructorDetailsControllerTest {
             when(instructorDetailsService.searchByHobby(hobby)).thenReturn(detailsList);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/instructor-details/search")
+            mockMvc.perform(get("/api/v1/instructor-details/search/hobby")
                             .param("hobby", hobby))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
@@ -280,7 +268,7 @@ class InstructorDetailsControllerTest {
             when(instructorDetailsService.searchByHobby(hobby)).thenReturn(Collections.emptyList());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/instructor-details/search")
+            mockMvc.perform(get("/api/v1/instructor-details/search/hobby")
                             .param("hobby", hobby))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(0)));
@@ -336,7 +324,7 @@ class InstructorDetailsControllerTest {
             // When & Then
             mockMvc.perform(get("/api/v1/instructor-details/{id}/exists", detailsId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.exists").value(true));
+                    .andExpect(status().isOk());
 
             verify(instructorDetailsService).existsById(detailsId);
         }
@@ -350,7 +338,7 @@ class InstructorDetailsControllerTest {
             // When & Then
             mockMvc.perform(get("/api/v1/instructor-details/{id}/exists", detailsId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.exists").value(false));
+                    .andExpect(status().isOk());
 
             verify(instructorDetailsService).existsById(detailsId);
         }

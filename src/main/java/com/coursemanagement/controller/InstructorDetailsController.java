@@ -109,7 +109,7 @@ public class InstructorDetailsController {
             @PathVariable UUID id) {
         
         instructorDetailsService.deleteInstructorDetails(id);
-        DeletionResponse response = DeletionResponse.success(id, "InstructorDetails");
+        DeletionResponse response = DeletionResponse.success(id, "Instructor details");
         return ResponseEntity.ok(response);
     }
 

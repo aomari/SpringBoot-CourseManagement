@@ -77,17 +77,24 @@ class StudentServiceTest {
         void shouldCreateStudentSuccessfully() {
             // Given
             when(studentRepository.existsByEmail(studentRequest.getEmail())).thenReturn(false);
-            when(studentRepository.save(any(Student.class))).thenReturn(testStudent);
+            when(studentRepository.save(any(Student.class))).thenAnswer(invocation -> {
+                Student student = invocation.getArgument(0);
+                // Simulate JPA setting timestamps
+                student.setId(UUID.randomUUID());
+                student.setCreatedAt(LocalDateTime.now());
+                student.setUpdatedAt(LocalDateTime.now());
+                return student;
+            });
 
             // When
             StudentResponse result = studentService.createStudent(studentRequest);
 
             // Then
             assertThat(result).isNotNull();
-            assertThat(result.getFirstName()).isEqualTo(testStudent.getFirstName());
-            assertThat(result.getLastName()).isEqualTo(testStudent.getLastName());
-            assertThat(result.getEmail()).isEqualTo(testStudent.getEmail());
-            assertThat(result.getCourses()).isEmpty();
+            assertThat(result.getFirstName()).isEqualTo(studentRequest.getFirstName());
+            assertThat(result.getLastName()).isEqualTo(studentRequest.getLastName());
+            assertThat(result.getEmail()).isEqualTo(studentRequest.getEmail());
+            assertThat(result.getCourses()).isNull();
 
             verify(studentRepository).existsByEmail(studentRequest.getEmail());
             verify(studentRepository).save(any(Student.class));

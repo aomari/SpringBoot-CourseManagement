@@ -136,7 +136,7 @@ class EnrollmentControllerTest {
                     .thenReturn(unenrollmentResponse);
 
             // When & Then
-            mockMvc.perform(post("/api/v1/students/{studentId}/unenroll", studentId)
+            mockMvc.perform(delete("/api/v1/students/{studentId}/unenroll", studentId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(enrollmentRequest)))
                     .andExpect(status().isOk())
@@ -153,7 +153,7 @@ class EnrollmentControllerTest {
             EnrollmentRequest invalidRequest = new EnrollmentRequest(null);
 
             // When & Then
-            mockMvc.perform(post("/api/v1/students/{studentId}/unenroll", studentId)
+            mockMvc.perform(delete("/api/v1/students/{studentId}/unenroll", studentId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andExpect(status().isBadRequest());
@@ -212,9 +212,9 @@ class EnrollmentControllerTest {
             when(studentService.isStudentEnrolledInCourse(studentId, courseId)).thenReturn(true);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/students/{studentId}/courses/{courseId}/enrolled", studentId, courseId))
+            mockMvc.perform(get("/api/v1/students/{studentId}/enrollment/courses/{courseId}", studentId, courseId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.enrolled").value(true));
+                    .andExpect(content().string("true"));
 
             verify(studentService).isStudentEnrolledInCourse(studentId, courseId);
         }
@@ -226,9 +226,9 @@ class EnrollmentControllerTest {
             when(studentService.isStudentEnrolledInCourse(studentId, courseId)).thenReturn(false);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/students/{studentId}/courses/{courseId}/enrolled", studentId, courseId))
+            mockMvc.perform(get("/api/v1/students/{studentId}/enrollment/courses/{courseId}", studentId, courseId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.enrolled").value(false));
+                    .andExpect(content().string("false"));
 
             verify(studentService).isStudentEnrolledInCourse(studentId, courseId);
         }
@@ -249,7 +249,7 @@ class EnrollmentControllerTest {
             mockMvc.perform(get("/api/v1/courses/{courseId}/students/count", courseId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.count").value(25))
-                    .andExpect(jsonPath("$.message").value("Total students enrolled in course"));
+                    .andExpect(jsonPath("$.description").value("Total students enrolled in course"));
 
             verify(studentService).countStudentsInCourse(courseId);
         }

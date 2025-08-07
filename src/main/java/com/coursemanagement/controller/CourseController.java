@@ -70,7 +70,7 @@ public class CourseController {
             @Parameter(description = "Course ID", example = "123e4567-e89b-12d3-a456-426614174000")
             @PathVariable UUID id) {
         
-        CourseResponse response = courseService.getCourseByIdWithReviews(id);
+        CourseResponse response = courseService.getCourseById(id);
         return ResponseEntity.ok(response);
     }
 
@@ -202,5 +202,18 @@ public class CourseController {
         long count = courseService.countCoursesByInstructorId(instructorId);
         CountResponse response = CountResponse.of(count, "Course", "Total courses taught by instructor");
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Check if course exists by title and instructor", description = "Checks if a course exists by title and instructor ID")
+    @ApiResponse(responseCode = "200", description = "Existence check completed")
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> existsByTitleAndInstructor(
+            @Parameter(description = "Course title", example = "Java Basics")
+            @RequestParam String title,
+            @Parameter(description = "Instructor ID", example = "123e4567-e89b-12d3-a456-426614174000")
+            @RequestParam UUID instructorId) {
+        
+        boolean exists = courseService.existsByTitleAndInstructorId(title, instructorId);
+        return ResponseEntity.ok(exists);
     }
 }

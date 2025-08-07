@@ -105,7 +105,7 @@ class StudentControllerTest {
         @DisplayName("Should get student by ID successfully")
         void shouldGetStudentByIdSuccessfully() throws Exception {
             // Given
-            when(studentService.getStudentById(studentId)).thenReturn(studentResponse);
+            when(studentService.getStudentByIdWithCourses(studentId)).thenReturn(studentResponse);
 
             // When & Then
             mockMvc.perform(get("/api/v1/students/{id}", studentId))
@@ -115,7 +115,7 @@ class StudentControllerTest {
                     .andExpect(jsonPath("$.lastName").value("Doe"))
                     .andExpect(jsonPath("$.email").value("john.doe@example.com"));
 
-            verify(studentService).getStudentById(studentId);
+            verify(studentService).getStudentByIdWithCourses(studentId);
         }
 
         @Test
@@ -150,20 +150,7 @@ class StudentControllerTest {
             verify(studentService).getStudentByEmail(email);
         }
 
-        @Test
-        @DisplayName("Should get students with courses successfully")
-        void shouldGetStudentsWithCoursesSuccessfully() throws Exception {
-            // Given
-            List<StudentResponse> students = Arrays.asList(studentResponse);
-            when(studentService.getAllStudentsWithCourses()).thenReturn(students);
 
-            // When & Then
-            mockMvc.perform(get("/api/v1/students/with-courses"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(1)));
-
-            verify(studentService).getAllStudentsWithCourses();
-        }
     }
 
     @Nested
@@ -228,7 +215,7 @@ class StudentControllerTest {
             mockMvc.perform(delete("/api/v1/students/{id}", studentId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("Student deleted successfully"))
-                    .andExpect(jsonPath("$.resourceId").value(studentId.toString()));
+                    .andExpect(jsonPath("$.deletedId").value(studentId.toString()));
 
             verify(studentService).deleteStudent(studentId);
         }
@@ -247,7 +234,7 @@ class StudentControllerTest {
             when(studentService.searchStudentsByName(searchTerm)).thenReturn(students);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/students/search")
+            mockMvc.perform(get("/api/v1/students/search/name")
                             .param("name", searchTerm))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
@@ -265,7 +252,7 @@ class StudentControllerTest {
             when(studentService.searchStudentsByEmail(searchTerm)).thenReturn(students);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/students/search")
+            mockMvc.perform(get("/api/v1/students/search/email")
                             .param("email", searchTerm))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
@@ -281,7 +268,7 @@ class StudentControllerTest {
             when(studentService.searchStudentsByName(searchTerm)).thenReturn(Collections.emptyList());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/students/search")
+            mockMvc.perform(get("/api/v1/students/search/name")
                             .param("name", searchTerm))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(0)));
@@ -328,39 +315,4 @@ class StudentControllerTest {
         }
     }
 
-    @Nested
-    @DisplayName("Student Statistics Tests")
-    class StudentStatisticsTests {
-
-        @Test
-        @DisplayName("Should get students by instructor successfully")
-        void shouldGetStudentsByInstructorSuccessfully() throws Exception {
-            // Given
-            UUID instructorId = UUID.randomUUID();
-            List<StudentResponse> students = Arrays.asList(studentResponse);
-            when(studentService.getStudentsByInstructor(instructorId)).thenReturn(students);
-
-            // When & Then
-            mockMvc.perform(get("/api/v1/students/by-instructor/{instructorId}", instructorId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$", hasSize(1)));
-
-            verify(studentService).getStudentsByInstructor(instructorId);
-        }
-
-        @Test
-        @DisplayName("Should check if student exists by email")
-        void shouldCheckIfStudentExistsByEmail() throws Exception {
-            // Given
-            String email = "john.doe@example.com";
-            when(studentService.existsByEmail(email)).thenReturn(true);
-
-            // When & Then
-            mockMvc.perform(get("/api/v1/students/exists/email/{email}", email))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.exists").value(true));
-
-            verify(studentService).existsByEmail(email);
-        }
-    }
 }

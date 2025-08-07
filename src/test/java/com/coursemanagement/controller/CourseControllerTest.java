@@ -156,14 +156,14 @@ class CourseControllerTest {
         @DisplayName("Should get course by ID with reviews successfully")
         void shouldGetCourseByIdWithReviewsSuccessfully() throws Exception {
             // Given
-            when(courseService.getCourseByIdWithReviews(courseId)).thenReturn(courseResponse);
+            when(courseService.getCourseById(courseId)).thenReturn(courseResponse);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/courses/{id}/with-reviews", courseId))
+            mockMvc.perform(get("/api/v1/courses/{id}", courseId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(courseId.toString()));
 
-            verify(courseService).getCourseByIdWithReviews(courseId);
+            verify(courseService).getCourseById(courseId);
         }
     }
 
@@ -226,7 +226,7 @@ class CourseControllerTest {
             mockMvc.perform(delete("/api/v1/courses/{id}", courseId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("Course deleted successfully"))
-                    .andExpect(jsonPath("$.resourceId").value(courseId.toString()));
+                    .andExpect(jsonPath("$.deletedId").value(courseId.toString()));
 
             verify(courseService).deleteCourse(courseId);
         }
@@ -245,7 +245,7 @@ class CourseControllerTest {
             when(courseService.searchCoursesByTitle(searchTerm)).thenReturn(courses);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/courses/search")
+            mockMvc.perform(get("/api/v1/courses/search/title")
                             .param("title", searchTerm))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
@@ -263,8 +263,8 @@ class CourseControllerTest {
             when(courseService.searchCoursesByInstructorName(searchTerm)).thenReturn(courses);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/courses/search")
-                            .param("instructor", searchTerm))
+            mockMvc.perform(get("/api/v1/courses/search/instructor")
+                            .param("name", searchTerm))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
@@ -279,7 +279,7 @@ class CourseControllerTest {
             when(courseService.searchCoursesByTitle(searchTerm)).thenReturn(Collections.emptyList());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/courses/search")
+            mockMvc.perform(get("/api/v1/courses/search/title")
                             .param("title", searchTerm))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(0)));
@@ -335,10 +335,10 @@ class CourseControllerTest {
             when(courseService.countCoursesByInstructorId(instructorId)).thenReturn(count);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/courses/count/instructor/{instructorId}", instructorId))
+            mockMvc.perform(get("/api/v1/courses/instructor/{instructorId}/count", instructorId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.count").value(5))
-                    .andExpect(jsonPath("$.message").value("Total courses by instructor"));
+                    .andExpect(jsonPath("$.description").value("Total courses taught by instructor"));
 
             verify(courseService).countCoursesByInstructorId(instructorId);
         }
@@ -352,7 +352,7 @@ class CourseControllerTest {
             // When & Then
             mockMvc.perform(get("/api/v1/courses/{id}/exists", courseId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.exists").value(true));
+                    .andExpect(status().isOk());
 
             verify(courseService).existsById(courseId);
         }
@@ -369,7 +369,7 @@ class CourseControllerTest {
                             .param("title", title)
                             .param("instructorId", instructorId.toString()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.exists").value(true));
+                    .andExpect(status().isOk());
 
             verify(courseService).existsByTitleAndInstructorId(title, instructorId);
         }

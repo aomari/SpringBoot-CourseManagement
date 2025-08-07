@@ -68,21 +68,21 @@ class InstructorDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should create instructor details with null values successfully")
-        void shouldCreateInstructorDetailsWithNullValuesSuccessfully() {
+        @DisplayName("Should create instructor details with empty hobby successfully")
+        void shouldCreateInstructorDetailsWithEmptyHobbySuccessfully() {
             // Given
-            InstructorDetailsRequest nullRequest = new InstructorDetailsRequest(null, null);
-            InstructorDetails nullDetails = new InstructorDetails(null, null);
-            nullDetails.setId(UUID.randomUUID());
+            InstructorDetailsRequest request = new InstructorDetailsRequest("https://youtube.com/@test", null);
+            InstructorDetails details = new InstructorDetails("https://youtube.com/@test", null);
+            details.setId(UUID.randomUUID());
             
-            when(instructorDetailsRepository.save(any(InstructorDetails.class))).thenReturn(nullDetails);
+            when(instructorDetailsRepository.save(any(InstructorDetails.class))).thenReturn(details);
 
             // When
-            InstructorDetailsResponse result = instructorDetailsService.createInstructorDetails(nullRequest);
+            InstructorDetailsResponse result = instructorDetailsService.createInstructorDetails(request);
 
             // Then
             assertThat(result).isNotNull();
-            assertThat(result.getYoutubeChannel()).isNull();
+            assertThat(result.getYoutubeChannel()).isEqualTo("https://youtube.com/@test");
             assertThat(result.getHobby()).isNull();
 
             verify(instructorDetailsRepository).save(any(InstructorDetails.class));
@@ -213,11 +213,11 @@ class InstructorDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should update instructor details with null values successfully")
-        void shouldUpdateInstructorDetailsWithNullValuesSuccessfully() {
+        @DisplayName("Should update instructor details with empty hobby successfully")
+        void shouldUpdateInstructorDetailsWithEmptyHobbySuccessfully() {
             // Given
             UUID detailsId = testInstructorDetails.getId();
-            InstructorDetailsRequest updateRequest = new InstructorDetailsRequest(null, null);
+            InstructorDetailsRequest updateRequest = new InstructorDetailsRequest("https://youtube.com/@updated", null);
             
             when(instructorDetailsRepository.findById(detailsId)).thenReturn(Optional.of(testInstructorDetails));
             when(instructorDetailsRepository.save(testInstructorDetails)).thenReturn(testInstructorDetails);

@@ -23,7 +23,7 @@ public class InstructorDetails {
     @Column(name = "youtube_channel", nullable = false)
     private String youtubeChannel;
 
-    @Column(name = "hoppy")
+    @Column(name = "hobby")
     private String hobby;
 
     @CreationTimestamp

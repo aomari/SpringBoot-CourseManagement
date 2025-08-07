@@ -149,14 +149,14 @@ class ReviewControllerTest {
         void shouldGetReviewsByCourseIdSuccessfully() throws Exception {
             // Given
             List<ReviewResponse> reviews = Arrays.asList(reviewResponse);
-            when(reviewService.getReviewsByCourseId(courseId)).thenReturn(reviews);
+            when(reviewService.getReviewsByCourseIdOrderedByDate(courseId)).thenReturn(reviews);
 
             // When & Then
             mockMvc.perform(get("/api/v1/courses/{courseId}/reviews", courseId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
-            verify(reviewService).getReviewsByCourseId(courseId);
+            verify(reviewService).getReviewsByCourseIdOrderedByDate(courseId);
         }
 
         @Test
@@ -167,7 +167,7 @@ class ReviewControllerTest {
             when(reviewService.getReviewsByCourseIdOrderedByDate(courseId)).thenReturn(reviews);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/courses/{courseId}/reviews/ordered", courseId))
+            mockMvc.perform(get("/api/v1/courses/{courseId}/reviews", courseId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
@@ -234,7 +234,7 @@ class ReviewControllerTest {
             mockMvc.perform(delete("/api/v1/reviews/{id}", reviewId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("Review deleted successfully"))
-                    .andExpect(jsonPath("$.resourceId").value(reviewId.toString()));
+                    .andExpect(jsonPath("$.deletedId").value(reviewId.toString()));
 
             verify(reviewService).deleteReview(reviewId);
         }
@@ -253,7 +253,7 @@ class ReviewControllerTest {
             when(reviewService.searchReviewsByComment(keyword)).thenReturn(reviews);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/reviews/search")
+            mockMvc.perform(get("/api/v1/reviews/search/comment")
                             .param("keyword", keyword))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
@@ -270,8 +270,8 @@ class ReviewControllerTest {
             when(reviewService.searchReviewsByCourseTitle(title)).thenReturn(reviews);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/reviews/search")
-                            .param("courseTitle", title))
+            mockMvc.perform(get("/api/v1/reviews/search/course")
+                            .param("title", title))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
@@ -286,7 +286,7 @@ class ReviewControllerTest {
             when(reviewService.searchReviewsByComment(keyword)).thenReturn(Collections.emptyList());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/reviews/search")
+            mockMvc.perform(get("/api/v1/reviews/search/comment")
                             .param("keyword", keyword))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(0)));
@@ -346,7 +346,7 @@ class ReviewControllerTest {
             mockMvc.perform(get("/api/v1/courses/{courseId}/reviews/count", courseId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.count").value(10))
-                    .andExpect(jsonPath("$.message").value("Total reviews for course"));
+                    .andExpect(jsonPath("$.description").value("Total reviews for course"));
 
             verify(reviewService).countReviewsByCourseId(courseId);
         }
@@ -375,14 +375,14 @@ class ReviewControllerTest {
         void shouldGetReviewsByStudentIdSuccessfully() throws Exception {
             // Given
             List<ReviewResponse> reviews = Arrays.asList(reviewResponse);
-            when(reviewService.getReviewsByStudentId(studentId)).thenReturn(reviews);
+            when(reviewService.getReviewsByStudentIdOrderedByDate(studentId)).thenReturn(reviews);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/reviews/student/{studentId}", studentId))
+            mockMvc.perform(get("/api/v1/students/{studentId}/reviews", studentId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
-            verify(reviewService).getReviewsByStudentId(studentId);
+            verify(reviewService).getReviewsByStudentIdOrderedByDate(studentId);
         }
 
         @Test
@@ -393,7 +393,7 @@ class ReviewControllerTest {
             when(reviewService.getReviewsByStudentIdOrderedByDate(studentId)).thenReturn(reviews);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/reviews/student/{studentId}/ordered", studentId))
+            mockMvc.perform(get("/api/v1/students/{studentId}/reviews", studentId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
@@ -408,10 +408,10 @@ class ReviewControllerTest {
             when(reviewService.countReviewsByStudentId(studentId)).thenReturn(count);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/reviews/student/{studentId}/count", studentId))
+            mockMvc.perform(get("/api/v1/students/{studentId}/reviews/count", studentId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.count").value(3))
-                    .andExpect(jsonPath("$.message").value("Total reviews by student"));
+                    .andExpect(jsonPath("$.description").value("Total reviews written by student"));
 
             verify(reviewService).countReviewsByStudentId(studentId);
         }

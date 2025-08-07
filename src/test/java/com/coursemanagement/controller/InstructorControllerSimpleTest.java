@@ -5,12 +5,14 @@ import com.coursemanagement.dto.InstructorResponse;
 import com.coursemanagement.service.InstructorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @DisplayName("Instructor Controller Simple Tests")
 class InstructorControllerSimpleTest {
 
@@ -56,16 +59,15 @@ class InstructorControllerSimpleTest {
                 .thenReturn(response);
 
         // When & Then
-        mockMvc.perform(post("/api/instructors")
+        mockMvc.perform(post("/api/v1/instructors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.id").value(instructorId.toString()))
-                .andExpect(jsonPath("$.data.firstName").value("John"))
-                .andExpect(jsonPath("$.data.lastName").value("Doe"))
-                .andExpect(jsonPath("$.data.email").value("john.doe@example.com"));
+                .andExpect(jsonPath("$.id").value(instructorId.toString()))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
     }
 
     @Test
@@ -82,14 +84,13 @@ class InstructorControllerSimpleTest {
         when(instructorService.getAllInstructors()).thenReturn(instructors);
 
         // When & Then
-        mockMvc.perform(get("/api/instructors"))
+        mockMvc.perform(get("/api/v1/instructors"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data[0].id").value(instructorId.toString()))
-                .andExpect(jsonPath("$.data[0].firstName").value("John"))
-                .andExpect(jsonPath("$.data[0].lastName").value("Doe"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].id").value(instructorId.toString()))
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[0].lastName").value("Doe"));
     }
 
     @Test
@@ -105,13 +106,12 @@ class InstructorControllerSimpleTest {
         when(instructorService.getInstructorById(instructorId)).thenReturn(response);
 
         // When & Then
-        mockMvc.perform(get("/api/instructors/{id}", instructorId))
+        mockMvc.perform(get("/api/v1/instructors/{id}", instructorId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.id").value(instructorId.toString()))
-                .andExpect(jsonPath("$.data.firstName").value("John"))
-                .andExpect(jsonPath("$.data.lastName").value("Doe"));
+                .andExpect(jsonPath("$.id").value(instructorId.toString()))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"));
     }
 
     @Test
@@ -129,14 +129,13 @@ class InstructorControllerSimpleTest {
                 .thenReturn(response);
 
         // When & Then
-        mockMvc.perform(put("/api/instructors/{id}", instructorId)
+        mockMvc.perform(put("/api/v1/instructors/{id}", instructorId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.firstName").value("John Updated"))
-                .andExpect(jsonPath("$.data.lastName").value("Doe Updated"));
+                .andExpect(jsonPath("$.firstName").value("John Updated"))
+                .andExpect(jsonPath("$.lastName").value("Doe Updated"));
     }
 
     @Test
@@ -148,10 +147,9 @@ class InstructorControllerSimpleTest {
         // when(instructorService.deleteInstructor(instructorId)).thenReturn(true);
 
         // When & Then
-        mockMvc.perform(delete("/api/instructors/{id}", instructorId))
+        mockMvc.perform(delete("/api/v1/instructors/{id}", instructorId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Instructor deleted successfully"));
     }
 }

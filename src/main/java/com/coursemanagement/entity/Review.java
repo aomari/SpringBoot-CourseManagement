@@ -38,7 +38,7 @@ public class Review {
 
     // Many-to-one relationship with Student
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private Student student;
 
     // Default constructor

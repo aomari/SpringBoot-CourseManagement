@@ -79,16 +79,23 @@ class CourseServiceTest {
             // Given
             when(instructorRepository.findById(courseRequest.getInstructorId())).thenReturn(Optional.of(testInstructor));
             when(courseRepository.existsByTitleAndInstructorId(courseRequest.getTitle(), courseRequest.getInstructorId())).thenReturn(false);
-            when(courseRepository.save(any(Course.class))).thenReturn(testCourse);
+            when(courseRepository.save(any(Course.class))).thenAnswer(invocation -> {
+                Course course = invocation.getArgument(0);
+                // Simulate JPA setting timestamps and ID
+                course.setId(UUID.randomUUID());
+                course.setCreatedAt(LocalDateTime.now());
+                course.setUpdatedAt(LocalDateTime.now());
+                return course;
+            });
 
             // When
             CourseResponse result = courseService.createCourse(courseRequest);
 
             // Then
             assertThat(result).isNotNull();
-            assertThat(result.getTitle()).isEqualTo(testCourse.getTitle());
+            assertThat(result.getTitle()).isEqualTo(courseRequest.getTitle());
             assertThat(result.getInstructor().getId()).isEqualTo(testInstructor.getId());
-            assertThat(result.getReviews()).isEmpty();
+            assertThat(result.getReviews()).isNull();
 
             verify(instructorRepository).findById(courseRequest.getInstructorId());
             verify(courseRepository).existsByTitleAndInstructorId(courseRequest.getTitle(), courseRequest.getInstructorId());
