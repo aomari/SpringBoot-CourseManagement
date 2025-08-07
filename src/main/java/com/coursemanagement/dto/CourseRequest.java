@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -11,6 +12,12 @@ import java.util.UUID;
  * DTO for Course creation and update requests.
  */
 @Schema(description = "Request DTO for Course operations")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class CourseRequest {
 
     @NotBlank(message = "Title is required")
@@ -21,38 +28,4 @@ public class CourseRequest {
     @NotNull(message = "Instructor ID is required")
     @Schema(description = "ID of the instructor who teaches this course", example = "123e4567-e89b-12d3-a456-426614174000", required = true)
     private UUID instructorId;
-
-    // Default constructor
-    public CourseRequest() {}
-
-    // Constructor with all fields
-    public CourseRequest(String title, UUID instructorId) {
-        this.title = title;
-        this.instructorId = instructorId;
-    }
-
-    // Getters and Setters
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public UUID getInstructorId() {
-        return instructorId;
-    }
-
-    public void setInstructorId(UUID instructorId) {
-        this.instructorId = instructorId;
-    }
-
-    @Override
-    public String toString() {
-        return "CourseRequest{" +
-                "title='" + title + '\'' +
-                ", instructorId=" + instructorId +
-                '}';
-    }
 }

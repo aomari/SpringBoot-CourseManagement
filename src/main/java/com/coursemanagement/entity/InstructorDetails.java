@@ -1,6 +1,7 @@
 package com.coursemanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,11 +14,18 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "instructor_details")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"instructor"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InstructorDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "youtube_channel", nullable = false)
@@ -38,72 +46,9 @@ public class InstructorDetails {
     @OneToOne(mappedBy = "instructorDetails", cascade = CascadeType.ALL)
     private Instructor instructor;
 
-    // Default constructor
-    public InstructorDetails() {}
-
-    // Constructor with required fields
+    // Constructor with required fields (excluding id and timestamps)
     public InstructorDetails(String youtubeChannel, String hobby) {
         this.youtubeChannel = youtubeChannel;
         this.hobby = hobby;
-    }
-
-    // Getters and Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getYoutubeChannel() {
-        return youtubeChannel;
-    }
-
-    public void setYoutubeChannel(String youtubeChannel) {
-        this.youtubeChannel = youtubeChannel;
-    }
-
-    public String getHobby() {
-        return hobby;
-    }
-
-    public void setHobby(String hobby) {
-        this.hobby = hobby;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
-    }
-
-    @Override
-    public String toString() {
-        return "InstructorDetails{" +
-                "id=" + id +
-                ", youtubeChannel='" + youtubeChannel + '\'' +
-                ", hobby='" + hobby + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
     }
 }

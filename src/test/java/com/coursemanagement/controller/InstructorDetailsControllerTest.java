@@ -79,7 +79,7 @@ class InstructorDetailsControllerTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(detailsId.toString()))
                     .andExpect(jsonPath("$.youtubeChannel").value("https://youtube.com/@johndoe"))
-                    .andExpect(jsonPath("$.hoppy").value("Playing guitar"));
+                    .andExpect(jsonPath("$.hobby").value("Playing guitar"));
 
             verify(instructorDetailsService).createInstructorDetails(any());
         }
@@ -116,7 +116,7 @@ class InstructorDetailsControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(detailsId.toString()))
                     .andExpect(jsonPath("$.youtubeChannel").value("https://youtube.com/@johndoe"))
-                    .andExpect(jsonPath("$.hoppy").value("Playing guitar"));
+                    .andExpect(jsonPath("$.hobby").value("Playing guitar"));
 
             verify(instructorDetailsService).getInstructorDetailsById(detailsId);
         }
@@ -162,12 +162,12 @@ class InstructorDetailsControllerTest {
             // Given
             InstructorDetailsRequest updateRequest = new InstructorDetailsRequest(
                     "https://youtube.com/@johnupdated", 
-                    "Updated hoppy"
+                    "Updated hobby"
             );
             InstructorDetailsResponse updatedResponse = new InstructorDetailsResponse(
                     detailsId,
                     "https://youtube.com/@johnupdated",
-                    "Updated hoppy",
+                    "Updated hobby",
                     LocalDateTime.now(),
                     LocalDateTime.now()
             );
@@ -180,7 +180,7 @@ class InstructorDetailsControllerTest {
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.youtubeChannel").value("https://youtube.com/@johnupdated"))
-                    .andExpect(jsonPath("$.hoppy").value("Updated hoppy"));
+                    .andExpect(jsonPath("$.hobby").value("Updated hobby"));
 
             verify(instructorDetailsService).updateInstructorDetails(eq(detailsId), any());
         }
@@ -244,36 +244,36 @@ class InstructorDetailsControllerTest {
         }
 
         @Test
-        @DisplayName("Should search instructor details by hoppy successfully")
-        void shouldSearchInstructorDetailsByhoppySuccessfully() throws Exception {
+        @DisplayName("Should search instructor details by hobby successfully")
+        void shouldSearchInstructorDetailsByHobbySuccessfully() throws Exception {
             // Given
-            String hoppy = "guitar";
+            String hobby = "guitar";
             List<InstructorDetailsResponse> detailsList = Arrays.asList(instructorDetailsResponse);
-            when(instructorDetailsService.searchByHobby(hoppy)).thenReturn(detailsList);
+            when(instructorDetailsService.searchByHobby(hobby)).thenReturn(detailsList);
 
             // When & Then
-            mockMvc.perform(get("/api/v1/instructor-details/search/hoppy")
-                            .param("hoppy", hoppy))
+            mockMvc.perform(get("/api/v1/instructor-details/search/hobby")
+                            .param("hobby", hobby))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
 
-            verify(instructorDetailsService).searchByHobby(hoppy);
+            verify(instructorDetailsService).searchByHobby(hobby);
         }
 
         @Test
         @DisplayName("Should return empty list when no instructor details match search")
         void shouldReturnEmptyListWhenNoInstructorDetailsMatchSearch() throws Exception {
             // Given
-            String hoppy = "nonexistent";
-            when(instructorDetailsService.searchByHobby(hoppy)).thenReturn(Collections.emptyList());
+            String hobby = "nonexistent";
+            when(instructorDetailsService.searchByHobby(hobby)).thenReturn(Collections.emptyList());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/instructor-details/search/hoppy")
-                            .param("hoppy", hoppy))
+            mockMvc.perform(get("/api/v1/instructor-details/search/hobby")
+                            .param("hobby", hobby))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(0)));
 
-            verify(instructorDetailsService).searchByHobby(hoppy);
+            verify(instructorDetailsService).searchByHobby(hobby);
         }
     }
 

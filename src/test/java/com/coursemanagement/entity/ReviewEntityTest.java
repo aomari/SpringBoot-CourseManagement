@@ -217,8 +217,8 @@ class ReviewEntityTest {
             String toString = review.toString();
 
             // Then
-            assertThat(toString).contains("Review{");
-            assertThat(toString).contains("comment='Great course!'");
+            assertThat(toString).contains("Review(");
+            assertThat(toString).contains("comment=Great course!");
         }
 
         @Test
@@ -231,8 +231,8 @@ class ReviewEntityTest {
             String toString = review.toString();
 
             // Then
-            assertThat(toString).contains("Review{");
-            assertThat(toString).contains("comment='null'");
+            assertThat(toString).contains("Review(");
+            assertThat(toString).contains("comment=null");
         }
 
         @Test
@@ -245,8 +245,8 @@ class ReviewEntityTest {
             String toString = review.toString();
 
             // Then
-            assertThat(toString).contains("Review{");
-            assertThat(toString).contains("comment=''");
+            assertThat(toString).contains("Review(");
+            assertThat(toString).contains("comment=");
         }
     }
 

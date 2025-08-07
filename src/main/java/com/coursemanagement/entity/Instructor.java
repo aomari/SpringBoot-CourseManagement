@@ -1,6 +1,7 @@
 package com.coursemanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,11 +16,18 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "instructor")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"courses"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Instructor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "first_name", nullable = false, length = 100)
@@ -48,17 +56,14 @@ public class Instructor {
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses = new ArrayList<>();
 
-    // Default constructor
-    public Instructor() {}
-
-    // Constructor with required fields
+    // Constructor with required fields (excluding id and timestamps)
     public Instructor(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
 
-    // Constructor with all fields
+    // Constructor with all fields (excluding id and timestamps)
     public Instructor(String firstName, String lastName, String email, InstructorDetails instructorDetails) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -66,73 +71,13 @@ public class Instructor {
         this.instructorDetails = instructorDetails;
     }
 
-    // Getters and Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public InstructorDetails getInstructorDetails() {
-        return instructorDetails;
-    }
-
+    // Custom setter for instructorDetails to maintain bidirectional relationship
     public void setInstructorDetails(InstructorDetails instructorDetails) {
         this.instructorDetails = instructorDetails;
         // Set bidirectional relationship
         if (instructorDetails != null) {
             instructorDetails.setInstructor(this);
         }
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
     }
 
     // Helper method to add a course
@@ -150,17 +95,5 @@ public class Instructor {
     // Helper method to get full name
     public String getFullName() {
         return firstName + " " + lastName;
-    }
-
-    @Override
-    public String toString() {
-        return "Instructor{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
     }
 }

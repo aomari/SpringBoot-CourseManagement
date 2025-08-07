@@ -313,10 +313,10 @@ class InstructorEntityTest {
             String toString = instructor.toString();
 
             // Then
-            assertThat(toString).contains("Instructor{");
-            assertThat(toString).contains("firstName='John'");
-            assertThat(toString).contains("lastName='Doe'");
-            assertThat(toString).contains("email='john.doe@example.com'");
+            assertThat(toString).contains("Instructor(");
+            assertThat(toString).contains("firstName=John");
+            assertThat(toString).contains("lastName=Doe");
+            assertThat(toString).contains("email=john.doe@example.com");
         }
     }
 

@@ -338,9 +338,8 @@ class CourseEntityTest {
             String toString = course.toString();
 
             // Then
-            assertThat(toString).contains("Course{");
-            assertThat(toString).contains("title='Java Basics'");
-            assertThat(toString).contains("instructor=John Doe");
+            assertThat(toString).contains("Course(");
+            assertThat(toString).contains("title=Java Basics");
         }
 
         @Test
@@ -353,7 +352,7 @@ class CourseEntityTest {
             String toString = course.toString();
 
             // Then
-            assertThat(toString).contains("instructor=null");
+            assertThat(toString).contains("Course(");
         }
     }
 

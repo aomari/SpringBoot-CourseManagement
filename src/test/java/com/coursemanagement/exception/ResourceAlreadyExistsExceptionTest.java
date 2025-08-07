@@ -140,7 +140,7 @@ class ResourceAlreadyExistsExceptionTest {
             Object fieldValue = new Object() {
                 @Override
                 public String toString() {
-                    return "Profile{youtube='@channel', hoppy='coding'}";
+                    return "Profile{youtube='@channel', hobby='coding'}";
                 }
             };
 
@@ -148,7 +148,7 @@ class ResourceAlreadyExistsExceptionTest {
             ResourceAlreadyExistsException exception = new ResourceAlreadyExistsException(resourceName, fieldName, fieldValue);
 
             // Then
-            assertThat(exception.getMessage()).isEqualTo("InstructorDetails already exists with profile: Profile{youtube='@channel', hoppy='coding'}");
+            assertThat(exception.getMessage()).isEqualTo("InstructorDetails already exists with profile: Profile{youtube='@channel', hobby='coding'}");
         }
     }
 

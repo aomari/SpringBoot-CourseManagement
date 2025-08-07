@@ -111,7 +111,7 @@ class InstructorControllerTest {
                 .andExpect(jsonPath("$.email").value("john.doe@example.com"))
                                     .andExpect(jsonPath("$.instructorDetails").exists())
                                     .andExpect(jsonPath("$.instructorDetails.youtubeChannel").value("https://youtube.com/@johndoe"))
-                .andExpect(jsonPath("$.instructorDetails.hoppy").value("Playing guitar"));
+                .andExpect(jsonPath("$.instructorDetails.hobby").value("Playing guitar"));
 
             verify(instructorService).createInstructor(any(InstructorRequest.class));
         }

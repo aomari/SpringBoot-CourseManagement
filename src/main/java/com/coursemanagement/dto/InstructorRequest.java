@@ -5,11 +5,18 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
 /**
  * DTO for Instructor creation and update requests.
  */
 @Schema(description = "Request DTO for Instructor operations")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class InstructorRequest {
 
     @NotBlank(message = "First name is required")
@@ -32,65 +39,10 @@ public class InstructorRequest {
     @Schema(description = "Optional instructor details")
     private InstructorDetailsRequest instructorDetails;
 
-    // Default constructor
-    public InstructorRequest() {}
-
     // Constructor without instructor details
     public InstructorRequest(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-    }
-
-    // Constructor with instructor details
-    public InstructorRequest(String firstName, String lastName, String email, 
-                           InstructorDetailsRequest instructorDetails) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.instructorDetails = instructorDetails;
-    }
-
-    // Getters and Setters
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public InstructorDetailsRequest getInstructorDetails() {
-        return instructorDetails;
-    }
-
-    public void setInstructorDetails(InstructorDetailsRequest instructorDetails) {
-        this.instructorDetails = instructorDetails;
-    }
-
-    @Override
-    public String toString() {
-        return "InstructorRequest{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", instructorDetails=" + instructorDetails +
-                '}';
     }
 }

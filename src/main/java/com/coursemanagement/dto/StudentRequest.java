@@ -4,11 +4,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.*;
 
 /**
  * DTO for Student creation and update requests.
  */
 @Schema(description = "Request DTO for Student operations")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class StudentRequest {
 
     @NotBlank(message = "First name is required")
@@ -25,48 +32,4 @@ public class StudentRequest {
     @Email(message = "Email should be valid")
     @Schema(description = "Email address of the student", example = "john.doe@example.com", required = true)
     private String email;
-
-    // Default constructor
-    public StudentRequest() {}
-
-    // Constructor with all fields
-    public StudentRequest(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
-
-    // Getters and Setters
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "StudentRequest{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

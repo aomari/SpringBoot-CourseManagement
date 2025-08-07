@@ -1,6 +1,7 @@
 package com.coursemanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,11 +14,18 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "reviews")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"course", "student"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "comment", columnDefinition = "TEXT", nullable = false)
@@ -41,74 +49,10 @@ public class Review {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    // Default constructor
-    public Review() {}
-
-    // Constructor with required fields
+    // Constructor with required fields (excluding id and timestamps)
     public Review(String comment, Course course, Student student) {
         this.comment = comment;
         this.course = course;
         this.student = student;
-    }
-
-    // Getters and Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
-    @Override
-    public String toString() {
-        return "Review{" +
-                "id=" + id +
-                ", comment='" + comment + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", courseTitle=" + (course != null ? course.getTitle() : null) +
-                ", studentName=" + (student != null ? student.getFullName() : null) +
-                '}';
     }
 }

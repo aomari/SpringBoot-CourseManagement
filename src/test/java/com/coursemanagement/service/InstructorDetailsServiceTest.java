@@ -68,8 +68,8 @@ class InstructorDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should create instructor details with empty hoppy successfully")
-        void shouldCreateInstructorDetailsWithEmptyhoppySuccessfully() {
+        @DisplayName("Should create instructor details with empty hobby successfully")
+        void shouldCreateInstructorDetailsWithEmptyHobbySuccessfully() {
             // Given
             InstructorDetailsRequest request = new InstructorDetailsRequest("https://youtube.com/@test", null);
             InstructorDetails details = new InstructorDetails("https://youtube.com/@test", null);
@@ -213,8 +213,8 @@ class InstructorDetailsServiceTest {
         }
 
         @Test
-        @DisplayName("Should update instructor details with empty hoppy successfully")
-        void shouldUpdateInstructorDetailsWithEmptyhoppySuccessfully() {
+        @DisplayName("Should update instructor details with empty hobby successfully")
+        void shouldUpdateInstructorDetailsWithEmptyHobbySuccessfully() {
             // Given
             UUID detailsId = testInstructorDetails.getId();
             InstructorDetailsRequest updateRequest = new InstructorDetailsRequest("https://youtube.com/@updated", null);
@@ -275,37 +275,37 @@ class InstructorDetailsServiceTest {
     class SearchInstructorDetailsTests {
 
         @Test
-        @DisplayName("Should search instructor details by hoppy successfully")
-        void shouldSearchInstructorDetailsByhoppySuccessfully() {
+        @DisplayName("Should search instructor details by hobby successfully")
+        void shouldSearchInstructorDetailsByHobbySuccessfully() {
             // Given
-            String hoppy = "guitar";
+            String hobby = "guitar";
             List<InstructorDetails> detailsList = Arrays.asList(testInstructorDetails);
-            when(instructorDetailsRepository.findByHobbyContainingIgnoreCase(hoppy)).thenReturn(detailsList);
+            when(instructorDetailsRepository.findByHobbyContainingIgnoreCase(hobby)).thenReturn(detailsList);
 
             // When
-            List<InstructorDetailsResponse> result = instructorDetailsService.searchByHobby(hoppy);
+            List<InstructorDetailsResponse> result = instructorDetailsService.searchByHobby(hobby);
 
             // Then
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getId()).isEqualTo(testInstructorDetails.getId());
             assertThat(result.get(0).getHobby()).isEqualTo(testInstructorDetails.getHobby());
 
-            verify(instructorDetailsRepository).findByHobbyContainingIgnoreCase(hoppy);
+            verify(instructorDetailsRepository).findByHobbyContainingIgnoreCase(hobby);
         }
 
         @Test
-        @DisplayName("Should return empty list when no instructor details match hoppy search")
-        void shouldReturnEmptyListWhenNoInstructorDetailsMatchhoppySearch() {
+        @DisplayName("Should return empty list when no instructor details match hobby search")
+        void shouldReturnEmptyListWhenNoInstructorDetailsMatchHobbySearch() {
             // Given
-            String hoppy = "nonexistent";
-            when(instructorDetailsRepository.findByHobbyContainingIgnoreCase(hoppy)).thenReturn(Collections.emptyList());
+            String hobby = "nonexistent";
+            when(instructorDetailsRepository.findByHobbyContainingIgnoreCase(hobby)).thenReturn(Collections.emptyList());
 
             // When
-            List<InstructorDetailsResponse> result = instructorDetailsService.searchByHobby(hoppy);
+            List<InstructorDetailsResponse> result = instructorDetailsService.searchByHobby(hobby);
 
             // Then
             assertThat(result).isEmpty();
-            verify(instructorDetailsRepository).findByHobbyContainingIgnoreCase(hoppy);
+            verify(instructorDetailsRepository).findByHobbyContainingIgnoreCase(hobby);
         }
 
         @Test

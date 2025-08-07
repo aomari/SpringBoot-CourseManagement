@@ -1,6 +1,7 @@
 package com.coursemanagement.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,11 +17,18 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "course")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"reviews", "students"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "title", nullable = false, length = 255)
@@ -51,70 +59,10 @@ public class Course {
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
     private List<Student> students = new ArrayList<>();
 
-    // Default constructor
-    public Course() {}
-
-    // Constructor with required fields
+    // Constructor with required fields (excluding id and timestamps)
     public Course(String title, Instructor instructor) {
         this.title = title;
         this.instructor = instructor;
-    }
-
-    // Getters and Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
     }
 
     // Helper method to add a review
@@ -148,16 +96,5 @@ public class Course {
     // Helper method to check if student is enrolled
     public boolean hasStudent(Student student) {
         return this.students.contains(student);
-    }
-
-    @Override
-    public String toString() {
-        return "Course{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", instructor=" + (instructor != null ? instructor.getFullName() : null) +
-                '}';
     }
 }
