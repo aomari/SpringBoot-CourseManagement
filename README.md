@@ -1,191 +1,125 @@
-# Course Management API
+# 🎓 Course Management System
 
-A comprehensive Spring Boot RESTful API for managing instructors and instructor details with PostgreSQL database. Features a clean layered architecture with full CRUD operations, validation, error handling, and Swagger documentation.
+A comprehensive Spring Boot REST API for managing educational courses, instructors, students, and reviews. Built with modern Java practices, featuring a clean architecture, complete CRUD operations, and comprehensive testing.
 
-## 🚀 Features
+## ✨ Features
 
-- **RESTful API** for instructors and instructor details management
-- **One-to-One relationship** between instructors and their details
-- **Comprehensive validation** with custom error handling
-- **Swagger/OpenAPI documentation** for interactive API testing
-- **PostgreSQL database** with UUID primary keys
-- **Clean architecture** with Controller → Service → Repository layers
-- **Search functionality** by name, email, YouTube channel, and hobby
+- 🏗️ **Complete Course Management** - Courses, instructors, students, and reviews
+- 🔗 **Rich Relationships** - One-to-one, one-to-many, and many-to-many mappings
+- 🛡️ **Robust Validation** - Input validation with detailed error responses
+- 📚 **Interactive API Docs** - Swagger/OpenAPI 3 documentation
+- 🧪 **Comprehensive Testing** - Unit, integration, and web layer tests with 80%+ coverage
+- 🐘 **PostgreSQL Integration** - Production-ready database with UUID primary keys
+- 🏭 **Professional Architecture** - Layered design with DTOs, services, and repositories
 
-## 📁 Project Structure
+## 🚀 Quick Start
 
-```
-src/main/java/com/coursemanagement/
-├── CourseManagementApplication.java        # Main application class
-├── config/
-│   └── OpenApiConfig.java                  # Swagger/OpenAPI configuration
-├── controller/
-│   ├── InstructorController.java          # REST endpoints for instructors
-│   └── InstructorDetailsController.java   # REST endpoints for instructor details
-├── dto/                                    # Data Transfer Objects
-├── entity/                                 # JPA entities
-├── exception/                              # Global exception handling
-├── repository/                             # Spring Data JPA repositories
-└── service/                                # Business logic layer
-```
+### Prerequisites
+- Java 17+
+- Docker & Docker Compose
+- Maven 3.8+
 
-## Prerequisites
-
-- Docker and Docker Compose installed
-- Java 17 or higher
-- Maven (or use included Maven wrapper)
-
-## Database Setup
-
-### Option 1: Using Docker Compose (Recommended)
-
-1. **Start the PostgreSQL container:**
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Check container status:**
-   ```bash
-   docker-compose ps
-   ```
-
-3. **View container logs:**
-   ```bash
-   docker-compose logs postgres
-   ```
-
-4. **Stop the container:**
-   ```bash
-   docker-compose down
-   ```
-
-### Option 2: Using Docker Run Command
-
+### 1. Start Database
 ```bash
-docker run -d \
-  --name course-db \
-  -e POSTGRES_DB=course_management_db \
-  -e POSTGRES_USER=admin \
-  -e POSTGRES_PASSWORD=admin123 \
-  -p 5432:5432 \
-  -v course-db-data:/var/lib/postgresql/data \
-  postgres:16
-```
-
-## Database Connection
-
-### Connect using psql (if installed):
-```bash
-psql -h localhost -p 5432 -U admin -d course_management_db
-```
-
-### Connect using Docker:
-```bash
-docker exec -it course-db psql -U admin -d course_management_db
-```
-
-### Database Credentials:
-- **Host:** localhost
-- **Port:** 5432
-- **Database:** course_management_db
-- **Username:** admin
-- **Password:** admin123
-
-## Application Setup
-
-1. **Build the application:**
-   ```bash
-   ./mvnw clean compile
-   ```
-
-2. **Run the application:**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-
-3. **Access the application:**
-   - **Main API**: http://localhost:8080
-   - **Swagger UI**: http://localhost:8080/swagger-ui.html
-   - **OpenAPI JSON**: http://localhost:8080/api-docs
-
-## 📡 API Endpoints
-
-### Instructor Management
-- `POST /api/v1/instructors` - Create instructor (with optional details)
-- `GET /api/v1/instructors` - Get all instructors
-- `GET /api/v1/instructors/{id}` - Get instructor by ID
-- `PUT /api/v1/instructors/{id}` - Update instructor
-- `DELETE /api/v1/instructors/{id}` - Delete instructor
-- `GET /api/v1/instructors/search?name={name}` - Search by name
-- `GET /api/v1/instructors/email/{email}` - Get by email
-
-### Instructor Details Management
-- `POST /api/v1/instructor-details` - Create instructor details
-- `GET /api/v1/instructor-details` - Get all instructor details
-- `GET /api/v1/instructor-details/{id}` - Get details by ID
-- `PUT /api/v1/instructor-details/{id}` - Update details
-- `DELETE /api/v1/instructor-details/{id}` - Delete details
-- `GET /api/v1/instructor-details/search/youtube?channel={channel}` - Search by YouTube
-- `GET /api/v1/instructor-details/search/hobby?hobby={hobby}` - Search by hobby
-
-## Useful Commands
-
-### Container Management:
-```bash
-# Start container
 docker-compose up -d
-
-# Stop container
-docker-compose down
-
-# Restart container
-docker-compose restart
-
-# Remove container and volume
-docker-compose down -v
-
-# View logs
-docker-compose logs -f postgres
 ```
 
-### Maven Commands:
+### 2. Run Application
 ```bash
-# Clean and compile
-./mvnw clean compile
-
-# Run application
 ./mvnw spring-boot:run
+```
 
-# Run tests
+### 3. Explore APIs
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **API Docs**: http://localhost:8080/api-docs
+- **Health Check**: http://localhost:8080/actuator/health
+
+## 📊 System Overview
+
+### Core Entities
+- **👨‍🏫 Instructors** - Manage instructor profiles and details
+- **🎓 Courses** - Course catalog with instructor assignments
+- **👨‍🎓 Students** - Student management and profiles
+- **⭐ Reviews** - Course reviews and ratings system
+- **📝 Enrollments** - Student course enrollment tracking
+
+### API Endpoints Summary
+```
+📚 Courses      → /api/v1/courses/*
+👨‍🏫 Instructors  → /api/v1/instructors/*
+👨‍🎓 Students     → /api/v1/students/*
+⭐ Reviews      → /api/v1/reviews/*
+📝 Enrollments → /api/v1/enrollments/*
+```
+
+## 📖 Documentation
+
+### 🎯 **Getting Started**
+- **[Complete Setup Guide](./docs/guides/getting-started.md)** - Detailed setup, configuration, and first steps
+- **[System Architecture](./docs/guides/architecture.md)** - Design patterns, relationships, and structure
+- **[Database Schema](./docs/reference/database-schema.md)** - Entity relationships and database design
+
+### 🔌 **API References**
+- **[Instructors API](./docs/api/instructors.md)** - Instructor and instructor details management
+- **[Students API](./docs/api/students.md)** - Student management and operations
+- **[Courses API](./docs/api/courses.md)** - Course catalog and management
+- **[Reviews API](./docs/api/reviews.md)** - Review system and ratings
+- **[Enrollments API](./docs/api/enrollments.md)** - Student enrollment management
+
+### 🧪 **Development & Testing**
+- **[Testing Guide](./docs/guides/testing.md)** - Comprehensive testing strategy and examples
+- **[Configuration Reference](./docs/reference/configuration.md)** - All configuration options and settings
+- **[Troubleshooting](./docs/reference/troubleshooting.md)** - Common issues and solutions
+
+## 🏗️ Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Controllers   │────│    Services     │────│  Repositories   │
+│  (REST Layer)   │    │ (Business Logic)│    │  (Data Access)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│      DTOs       │    │    Entities     │    │   PostgreSQL    │
+│ (API Contracts) │    │  (Domain Model) │    │   Database      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+- **Framework**: Spring Boot 3.5.4
+- **Language**: Java 17
+- **Database**: PostgreSQL 16
+- **ORM**: Spring Data JPA / Hibernate
+- **Testing**: JUnit 5, Mockito, TestContainers
+- **Documentation**: SpringDoc OpenAPI 3
+- **Build**: Maven
+- **Containerization**: Docker & Docker Compose
+
+## 🧪 Testing
+
+Run the comprehensive test suite:
+
+```bash
+# Run all tests
 ./mvnw test
 
-# Package application
-./mvnw clean package
+# Run with coverage report
+./mvnw test jacoco:report
 
-# Build without tests
-./mvnw clean package -DskipTests
+# View coverage report
+open target/site/jacoco/index.html
 ```
 
-### Database Operations:
+**Coverage Goals**: 80%+ instruction coverage, 70%+ branch coverage
+
+## 🚀 Example Usage
+
+### Create a Complete Course Setup
 ```bash
-# Connect to database
-docker exec -it course-db psql -U admin -d course_management_db
-
-# List databases
-docker exec -it course-db psql -U admin -c "\l"
-
-# List tables (after connecting)
-\dt
-
-# Exit psql
-\q
-```
-
-## 🧪 Example API Usage
-
-### Create an Instructor with Details
-```bash
-curl -X POST "http://localhost:8080/api/v1/instructors" \
+# 1. Create an instructor
+curl -X POST http://localhost:8080/api/v1/instructors \
   -H "Content-Type: application/json" \
   -d '{
     "firstName": "John",
@@ -193,49 +127,44 @@ curl -X POST "http://localhost:8080/api/v1/instructors" \
     "email": "john.doe@example.com",
     "instructorDetails": {
       "youtubeChannel": "https://youtube.com/@johndoe",
-      "hobby": "Teaching and coding"
+      "hobby": "Teaching Java and Spring Boot"
     }
+  }'
+
+# 2. Create a course
+curl -X POST http://localhost:8080/api/v1/courses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Spring Boot Masterclass",
+    "instructorId": "{instructor-id-from-step-1}"
+  }'
+
+# 3. Create a student and enroll
+curl -X POST http://localhost:8080/api/v1/students \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Alice",
+    "lastName": "Johnson",
+    "email": "alice.johnson@example.com"
   }'
 ```
 
-### Get All Instructors
-```bash
-curl -X GET "http://localhost:8080/api/v1/instructors"
-```
+> 💡 **Tip**: Use the [interactive Swagger UI](http://localhost:8080/swagger-ui.html) for easier API exploration!
 
-### Search Instructors by Name
-```bash
-curl -X GET "http://localhost:8080/api/v1/instructors/search?name=John"
-```
+## 🤝 Contributing
 
-## 🛠️ Technologies Used
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- **Spring Boot 3.5.4**
-- **Spring Data JPA**
-- **Spring Web & Validation**
-- **PostgreSQL**
-- **SpringDoc OpenAPI UI**
-- **Java 17**
-- **Maven**
+## 📄 License
 
-## Troubleshooting
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Port Already in Use:
-If port 5432 is already in use, you can:
-1. Stop existing PostgreSQL service: `sudo service postgresql stop`
-2. Or change the port mapping in `docker-compose.yml`
+---
 
-### Container Won't Start:
-1. Check if container name is already in use: `docker ps -a`
-2. Remove existing container: `docker rm course-db`
-3. Start fresh: `docker-compose up -d`
+**Built with ❤️ for learning Spring Boot and modern Java development practices**
 
-### Connection Issues:
-1. Ensure container is running: `docker-compose ps`
-2. Check logs: `docker-compose logs postgres`
-3. Verify port mapping: `docker port course-db`
-
-### Maven Issues:
-1. Make Maven wrapper executable: `chmod +x mvnw`
-2. Clean and rebuild: `./mvnw clean compile`
-3. Skip tests if needed: `./mvnw spring-boot:run -DskipTests` 
+> 🌟 **Perfect for**: Portfolio projects, learning Spring Boot, understanding REST API design, and practicing modern Java development!
