@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import com.coursemanagement.exception.GlobalExceptionHandler;
 import org.springframework.http.MediaType;
@@ -44,7 +44,7 @@ class InstructorControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private InstructorService instructorService;
 
     @Autowired
@@ -99,7 +99,7 @@ class InstructorControllerTest {
             when(instructorService.createInstructor(any(InstructorRequest.class))).thenReturn(instructorResponse);
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(instructorRequest)))
                     .andDo(print())
@@ -136,7 +136,7 @@ class InstructorControllerTest {
             when(instructorService.createInstructor(any(InstructorRequest.class))).thenReturn(responseWithoutDetails);
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestWithoutDetails)))
                     .andDo(print())
@@ -158,7 +158,7 @@ class InstructorControllerTest {
                 .thenThrow(new ResourceAlreadyExistsException("Instructor", "email", "john.doe@example.com"));
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(instructorRequest)))
                     .andDo(print())
@@ -176,7 +176,7 @@ class InstructorControllerTest {
             InstructorRequest invalidRequest = new InstructorRequest("", "", "invalid-email");
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
@@ -247,7 +247,7 @@ class InstructorControllerTest {
             when(instructorService.getAllInstructors()).thenReturn(instructors);
 
             // When & Then
-            mockMvc.perform(get("/api/instructors"))
+            mockMvc.perform(get("/api/v1/instructors"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
@@ -548,7 +548,7 @@ class InstructorControllerTest {
             InstructorRequest invalidRequest = new InstructorRequest();
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
@@ -566,7 +566,7 @@ class InstructorControllerTest {
             InstructorRequest invalidRequest = new InstructorRequest("John", "Doe", "invalid-email-format");
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
@@ -585,7 +585,7 @@ class InstructorControllerTest {
             InstructorRequest invalidRequest = new InstructorRequest(longString, longString, "valid@example.com");
 
             // When & Then
-            mockMvc.perform(post("/api/instructors")
+            mockMvc.perform(post("/api/v1/instructors")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidRequest)))
                     .andDo(print())
